@@ -11,6 +11,6 @@ class PublicServer extends Server
     protected string $version = '1.0.0';
 
     protected string $instructions = <<<'MARKDOWN'
-        Public MCP server for the Wedding Organizer application.
+        Public MCP server for the application.
     MARKDOWN;
 }

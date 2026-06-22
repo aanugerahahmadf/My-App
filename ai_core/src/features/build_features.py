@@ -222,7 +222,6 @@ def build_features(method="combined", csv_path=None, app_url="http://127.0.0.1:8
             category    = row.get("Category", "unknown").strip().lower()
             price       = row.get("Price", "0").strip()
             disc_price  = row.get("Discount_Price", "").strip()
-            organizer   = row.get("Organizer", "").strip()
             image_path  = row.get("Image_Path", "").strip()
             description = row.get("Description", "").strip()
 
@@ -266,7 +265,6 @@ def build_features(method="combined", csv_path=None, app_url="http://127.0.0.1:8
                         "category"      : category,
                         "price"         : float(price) if price else 0.0,
                         "discount_price": float(disc_price) if disc_price else 0.0,
-                        "organizer"     : organizer,
                         "description"   : description,
                         "image_url"     : image_url,
                         "image_path"    : image_path,

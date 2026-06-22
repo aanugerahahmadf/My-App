@@ -567,7 +567,7 @@ class Messages extends Component implements HasActions, HasForms
     //         ->modalCancelActionLabel(__('Tutup'))
     //         ->form(function (array $arguments): array {
     //             $orderId = $arguments['orderId'] ?? null;
-    //             $order = \App\Models\Order::with(['package.weddingOrganizer', 'package.category', 'package.reviews', 'product.weddingOrganizer'])->find($orderId);
+    //             $order = \App\Models\Order::with(['package.category', 'package.reviews'])->find($orderId);
 
     //             if (! $order) {
     //                 return [
@@ -580,7 +580,7 @@ class Messages extends Component implements HasActions, HasForms
     //             $item     = $order->package ?? $order->product;
     //             $imageUrl = $item?->image_url ?? '';
     //             $itemName = $item?->name ?? '-';
-    //             $woName   = $item?->weddingOrganizer?->name ?? '-';
+    //             $woName   = '-';
     //             $category = $order->package?->category?->name ?? '';
     //             $avgRating = $order->package
     //                 ? number_format($order->package->reviews()->avg('rating') ?: 0, 1)

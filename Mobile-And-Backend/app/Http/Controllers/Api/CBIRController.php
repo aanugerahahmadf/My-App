@@ -119,7 +119,6 @@ class CBIRController extends Controller
             'message' => $success ? __('Product indexed successfully') : __('Failed to index product'),
             'data' => [
                 'product_id' => $product->id,
-                'wedding_organizer_id' => $product->wedding_organizer_id,
             ],
         ]);
     }

@@ -16,7 +16,7 @@ class SuperAdminSeeder extends Seeder
         $this->command->info('--- Seeding Super Admin ---');
 
         $user = User::updateOrCreate(
-            ['email' => 'devimakeup.wo@gmail.com'],
+            ['email' => 'devimakeup.wfd@gmail.com'],
             [
                 'full_name' => 'Super Admin',
                 'first_name' => 'Super',

@@ -106,7 +106,7 @@ $itemType = $order->package_id
     : \App\Filament\User\Resources\ProductResource::getModelLabel();
 $itemName = $item?->name ?? '-';
 $itemCat  = $item?->category?->name ?? '-';
-$wo       = $item?->weddingOrganizer?->name ?? '-';
+$weddingFlowersDecorasi = '-';
 
 // Transaction (metode pembayaran Midtrans)
 $tx = $order->latestTransaction;
@@ -166,7 +166,7 @@ if ($item) {
     }
 }
 
-$appName = config('app.name', 'Wedding Organizer');
+$appName = config('app.name', 'Wedding Flowers Decorasi');
 $now     = now()->format('d M Y, H:i');
 @endphp
 
@@ -235,7 +235,7 @@ $now     = now()->format('d M Y, H:i');
       </td>
       <td>
         <div class="item-name">{{ $itemName }}</div>
-        <div class="item-sub">{{ $itemType }} &bull; {{ $itemCat }} &bull; {{ $wo }}</div>
+        <div class="item-sub">{{ $itemType }} &bull; {{ $itemCat }}</div>
       </td>
       <td>{{ $order->quantity ?? 1 }}</td>
       <td class="right">Rp {{ number_format($order->total_price / max(1, $order->quantity ?? 1), 0, ',', '.') }}</td>

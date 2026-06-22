@@ -26,7 +26,6 @@ use Illuminate\Database\Eloquent\Model;
  * @property-read Collection<int, Transaction> $transactions
  * @property-read int|null $transactions_count
  * @property-read User $user
- * @property-read WeddingOrganizer|null $weddingOrganizer
  *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Order newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Order newQuery()

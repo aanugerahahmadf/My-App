@@ -129,7 +129,7 @@ class ReviewController extends Controller
 
             return response()->json([
                 'status' => 'success',
-                'data' => $reviews->products(),
+                'data' => $reviews->items(),
                 'pagination' => [
                     'current_page' => $reviews->currentPage(),
                     'last_page' => $reviews->lastPage(),
@@ -155,16 +155,14 @@ class ReviewController extends Controller
         try {
             $query = Review::with(['user:id,full_name,avatar_url', 'package:id,name'])
                 ->join('packages', 'reviews.package_id', '=', 'packages.id')
-                ->where('packages.wedding_organizer_id', $organizerId)
+                ->where('packages.wedding_flowers_decorasi_id', $organizerId)
                 ->select('reviews.*')
                 ->orderByDesc('reviews.created_at');
 
-            // Filter by rating if provided
             if ($request->filled('rating')) {
                 $query->where('reviews.rating', $request->rating);
             }
 
-            // Filter by min rating if provided
             if ($request->filled('min_rating')) {
                 $query->where('reviews.rating', '>=', $request->min_rating);
             }
@@ -173,7 +171,7 @@ class ReviewController extends Controller
 
             return response()->json([
                 'status' => 'success',
-                'data' => $reviews->products(),
+                'data' => $reviews->items(),
                 'pagination' => [
                     'current_page' => $reviews->currentPage(),
                     'last_page' => $reviews->lastPage(),
@@ -197,7 +195,7 @@ class ReviewController extends Controller
     public function getUserReviews(Request $request)
     {
         try {
-            $query = Review::with(['package:id,name,price', 'package.weddingOrganizer:id,name', 'product:id,name,price'])
+            $query = Review::with(['package:id,name,price', 'product:id,name,price'])
                 ->where('user_id', Auth::id())
                 ->orderByDesc('created_at');
 
@@ -205,7 +203,7 @@ class ReviewController extends Controller
 
             return response()->json([
                 'status' => 'success',
-                'data' => $reviews->products(),
+                'data' => $reviews->items(),
                 'pagination' => [
                     'current_page' => $reviews->currentPage(),
                     'last_page' => $reviews->lastPage(),

@@ -47,6 +47,29 @@ Route::get('/auth/deeplink/google/success', [SocialiteController::class, 'verify
 Route::get('/auth/google/success', [SocialiteController::class, 'verifyMobileToken'])
     ->name('auth.google.success');
 
+// Clerk login bridge — exchanges Sanctum token for session auth (for Filament access)
+Route::get('/clerk/login', function (\Illuminate\Http\Request $request) {
+    $token = $request->query('token');
+    if (!$token) {
+        return redirect('/admin/login')->with('error', 'Token tidak ditemukan');
+    }
+
+    $accessToken = \Laravel\Sanctum\PersonalAccessToken::findToken($token);
+    if (!$accessToken) {
+        return redirect('/admin/login')->with('error', 'Token tidak valid');
+    }
+
+    $user = $accessToken->tokenable;
+    if (!$user || !$user instanceof \App\Models\User) {
+        return redirect('/admin/login')->with('error', 'Pengguna tidak ditemukan');
+    }
+
+    Auth::login($user);
+
+    $panel = $user->hasRole('super_admin') ? 'admin' : 'user';
+    return redirect("/{$panel}");
+})->name('clerk.login');
+
 // Google OAuth reverse client ID scheme callback
 // com.googleusercontent.apps.xxx:/oauth2redirect?code=... → /auth/google/oauth2redirect?code=...
 Route::get('/auth/{provider}/oauth2redirect', [SocialiteController::class, 'callbackMobileScheme'])

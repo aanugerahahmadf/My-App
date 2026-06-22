@@ -49,7 +49,7 @@ VITE_PLATFORM=mobile
 
 # NativePHP Mobile app identity
 NATIVEPHP_APP_ID=com.yourcompany.weddingorganizer
-NATIVEPHP_APP_NAME="Wedding Organizer"
+NATIVEPHP_APP_NAME="Wedding Flowers Decorasi"
 NATIVEPHP_APP_VERSION=1.0.0
 NATIVEPHP_APP_VERSION_CODE=1
 ```
@@ -163,7 +163,7 @@ Key settings in `config/nativephp.php` (or equivalent NativePHP config):
 
 ```php
 'app_id'           => env('NATIVEPHP_APP_ID', 'com.yourcompany.weddingorganizer'),
-'app_name'         => env('NATIVEPHP_APP_NAME', 'Wedding Organizer'),
+'app_name'         => env('NATIVEPHP_APP_NAME', 'Wedding Flowers Decorasi'),
 'version'          => env('NATIVEPHP_APP_VERSION', '1.0.0'),
 'android' => [
     'version_code'     => (int) env('NATIVEPHP_APP_VERSION_CODE', 1),

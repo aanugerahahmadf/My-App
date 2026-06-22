@@ -75,6 +75,7 @@ Route::post('/forgot-password', [AuthController::class, 'forgotPassword']);
 Route::post('/reset-password', [AuthController::class, 'resetPassword']);
 Route::post('/auth/send-otp', [AuthController::class, 'sendOtp']);
 Route::post('/auth/verify-otp', [AuthController::class, 'verifyOtp']);
+Route::post('/auth/clerk-sync', [AuthController::class, 'clerkSync']);
 
 // Public endpoints
 Route::get('/packages/public', [PackageController::class, 'index']);

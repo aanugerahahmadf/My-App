@@ -500,11 +500,7 @@ class OrderResource extends Resource
                                     ->weight(FontWeight::Bold)
                                     ->size(Infolists\Components\TextEntry\TextEntrySize::Large)
                                     ->visible(fn ($record) => (bool) $record->product_id),
-                                Infolists\Components\TextEntry::make('package.weddingOrganizer.name')
-                                    ->hiddenLabel()
-                                    ->icon('heroicon-o-building-office')
-                                    ->color('gray')
-                                    ->visible(fn ($record) => (bool) $record->package_id),
+                                
                                 Infolists\Components\TextEntry::make('booking_date')
                                     ->label(__('Tanggal Acara'))
                                     ->inlineLabel()

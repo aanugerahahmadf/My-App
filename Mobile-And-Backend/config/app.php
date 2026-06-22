@@ -13,7 +13,7 @@ return [
     |
     */
 
-    'name' => env('APP_NAME', 'Wedding Organizer'),
+    'name' => env('APP_NAME', 'Wedding Flowers Decorasi'),
 
     /*
     |--------------------------------------------------------------------------

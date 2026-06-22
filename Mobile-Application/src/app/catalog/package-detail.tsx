@@ -90,7 +90,7 @@ export default function PackageDetailScreen() {
             <ThemedView style={styles.organizerCard}>
               <Ionicons name="business-outline" size={24} color={theme.icon} />
               <View style={styles.organizerInfo}>
-                <ThemedText type="defaultSemiBold">{data.organizer?.name || 'Wedding Organizer'}</ThemedText>
+                <ThemedText type="defaultSemiBold">{data.organizer?.name || 'Wedding Flowers Decorasi'}</ThemedText>
                 <ThemedText themeColor="textSecondary" type="small">{data.organizer?.address || 'Alamat tidak tersedia'}</ThemedText>
               </View>
             </ThemedView>

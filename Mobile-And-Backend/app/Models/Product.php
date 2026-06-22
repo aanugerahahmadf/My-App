@@ -102,6 +102,11 @@ class Product extends Model implements HasMedia
         return false;
     }
 
+    public function weddingFlowersDecorasi()
+    {
+        return $this->belongsTo(User::class, 'wedding_flowers_decorasi_id');
+    }
+
     public function category()
     {
         return $this->belongsTo(Category::class);

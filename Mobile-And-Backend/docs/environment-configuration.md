@@ -340,7 +340,7 @@ Secrets such as database passwords, API keys, and mail credentials only need to 
 ```dotenv
 # .env — the single source of truth for secrets
 DB_HOST=127.0.0.1
-DB_DATABASE=wedding_organizer
+DB_DATABASE=wedding_flowers_decorasi
 DB_USERNAME=root
 DB_PASSWORD=secret
 

@@ -1,7 +1,7 @@
 @props([
     'category' => '',
     'name'     => '',
-    'wo'       => null,
+    'weddingFlowersDecorasi'       => null,
     'price'    => '',
 ])
 
@@ -16,9 +16,9 @@
         {{ $name }}
     </p>
 
-    @if($wo)
+    @if($weddingFlowersDecorasi)
         <p class="text-[10px] text-gray-400 flex items-center gap-1 mt-0.5">
-            🏢 {{ $wo }}
+            🏢 {{ $weddingFlowersDecorasi }}
         </p>
     @endif
 

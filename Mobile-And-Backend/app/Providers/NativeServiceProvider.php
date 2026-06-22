@@ -353,7 +353,7 @@ class NativeServiceProvider extends ServiceProvider
                 'database.default'                                  => 'mysql_proxy',
                 'database.connections.mysql_proxy.proxy_url'        => $proxyUrl,
                 'database.connections.mysql_proxy.proxy_secret'     => $proxySecret,
-                'database.connections.mysql_proxy.database'         => env('DB_DATABASE', 'wedding_organizer'),
+                'database.connections.mysql_proxy.database'         => env('DB_DATABASE', 'wedding_flowers_decorasi'),
                 // Switch session/cache to file to avoid DB chicken-egg on boot
                 'session.driver'                                     => 'file',
                 'cache.default'                                      => 'file',
@@ -455,7 +455,7 @@ class NativeServiceProvider extends ServiceProvider
             // Database connection
             'database.connections.mysql.host'     => $dbHost,
             'database.connections.mysql.port'     => env('DB_PORT', '3306'),
-            'database.connections.mysql.database' => env('DB_DATABASE', config('database.connections.mysql.database', 'wedding_organizer')),
+            'database.connections.mysql.database' => env('DB_DATABASE', config('database.connections.mysql.database', 'wedding_flowers_decorasi')),
             'database.connections.mysql.username' => env('DB_USERNAME', 'root'),
             'database.connections.mysql.password' => env('DB_PASSWORD', ''),
 
@@ -480,7 +480,7 @@ class NativeServiceProvider extends ServiceProvider
             $runtimeConfig['database.default']                                  = 'mysql_proxy';
             $runtimeConfig['database.connections.mysql_proxy.proxy_url']        = $proxyUrl;
             $runtimeConfig['database.connections.mysql_proxy.proxy_secret']     = env('NATIVE_DB_PROXY_SECRET', 'nativephp-db-proxy-secret-2024');
-            $runtimeConfig['database.connections.mysql_proxy.database']         = env('DB_DATABASE', config('database.connections.mysql.database', 'wedding_organizer'));
+            $runtimeConfig['database.connections.mysql_proxy.database']         = env('DB_DATABASE', config('database.connections.mysql.database', 'wedding_flowers_decorasi'));
 
             // Google OAuth: redirect to deep-link scheme on Android/iOS
             if (env('GOOGLE_MOBILE_REDIRECT_URL')) {

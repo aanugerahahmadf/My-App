@@ -126,7 +126,7 @@ fun SocialAuthButtons(
                 }
                 pop()
                 
-                append(" dan Kebijakan Cookie Wedding Organizer.")
+                append(" dan Kebijakan Cookie Wedding Flowers Decorasi.")
             }
 
             androidx.compose.foundation.text.ClickableText(

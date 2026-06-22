@@ -27,9 +27,7 @@ class OrderController extends Controller
         try {
             $query = Order::where('user_id', Auth::id())
                 ->with([
-                    'package' => function ($q): void {
-                        $q->with('weddingOrganizer:id,name,rating');
-                    },
+                    'package' => function ($q): void { $q->with('weddingFlowersDecorasi:id,name,rating'); },
                     'product.category',
                 ]);
 
@@ -46,12 +44,11 @@ class OrderController extends Controller
             }
 
             $orders = $query->latest()->paginate($request->get('per_page', 10));
-            $products = $orders->products();
+            $products = $orders->items();
 
-            // Manual serialize agar response konsisten (termasuk wedding_organizer di level order)
             $data = collect($products)->map(function (Order $order) {
                 $pkg = $order->package;
-                $wo = $pkg?->weddingOrganizer;
+                $wfd = $pkg?->weddingFlowersDecorasi;
 
                 return [
                     'id' => $order->id,
@@ -72,8 +69,8 @@ class OrderController extends Controller
                         'name' => $pkg->name,
                         'price' => (float) $pkg->price,
                         'discount_price' => (float) ($pkg->discount_price ?? 0),
-                        'wedding_organizer_id' => $pkg->wedding_organizer_id,
-                        'wedding_organizer' => $wo ? ['id' => $wo->id, 'name' => $wo->name, 'rating' => $wo->rating] : null,
+                        'wedding_flowers_decorasi_id' => $pkg->wedding_flowers_decorasi_id,
+                        'wedding_flowers_decorasi' => $wfd ? ['id' => $wfd->id, 'name' => $wfd->name, 'rating' => $wfd->rating] : null,
                         'image_url' => $pkg->image_url ?? null,
                     ] : ($order->product ? [
                         'id' => $order->product->id,
@@ -87,8 +84,8 @@ class OrderController extends Controller
                         'id' => $pkg->id,
                         'name' => $pkg->name,
                         'price' => (float) $pkg->price,
-                        'wedding_organizer_id' => $pkg->wedding_organizer_id,
-                        'wedding_organizer' => $wo ? ['id' => $wo->id, 'name' => $wo->name, 'rating' => $wo->rating] : null,
+                        'wedding_flowers_decorasi_id' => $pkg->wedding_flowers_decorasi_id,
+                        'wedding_flowers_decorasi' => $wfd ? ['id' => $wfd->id, 'name' => $wfd->name, 'rating' => $wfd->rating] : null,
                     ] : null,
                     'product' => $order->product ? [
                         'id' => $order->product->id,
@@ -97,7 +94,6 @@ class OrderController extends Controller
                         'discount_price' => (float) ($order->product->discount_price ?? 0),
                         'category' => $order->product->category?->name,
                     ] : null,
-                    'wedding_organizer' => $wo ? ['id' => $wo->id, 'name' => $wo->name, 'rating' => $wo->rating] : null,
                 ];
             })->all();
 

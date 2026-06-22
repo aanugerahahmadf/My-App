@@ -428,7 +428,6 @@ def search_similar():
                 "category"      : meta.get("category", ""),
                 "distance"      : round(raw_score, 4),
                 "image_path"    : meta.get("image_path", ""),
-                "organizer"     : meta.get("organizer", ""),
                 "price"         : meta.get("price", 0),
                 "discount_price": meta.get("discount_price", 0),
             })

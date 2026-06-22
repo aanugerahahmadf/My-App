@@ -107,7 +107,7 @@
                 <x-filament::link color="primary" tag="button" type="button"
                     class="text-xs font-bold hover:underline focus:underline active:underline"
                     @click.stop="$dispatch('open-agreement', { mode: 'privacy' })">{{ __('Kebijakan Privasi') }}</x-filament::link>
-                <span>{{ __('dan Kebijakan Cookie Wedding Organizer.') }}</span>
+                <span>{{ __('dan Kebijakan Cookie Wedding Flowers Decorasi.') }}</span>
             </div>
         </div>
     </div>

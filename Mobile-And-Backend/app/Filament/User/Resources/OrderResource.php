@@ -43,7 +43,7 @@ class OrderResource extends Resource
 
     public static function getGloballySearchableAttributes(): array
     {
-        return ['order_number', 'package.name', 'product.name', 'package.weddingOrganizer.name', 'user.full_name', 'user.phone', 'notes', 'status', 'payment_status'];
+        return ['order_number', 'package.name', 'product.name', 'user.full_name', 'user.phone', 'notes', 'status', 'payment_status'];
     }
 
     public static function getGlobalSearchResultTitle(Model $record): string
@@ -340,14 +340,6 @@ class OrderResource extends Resource
                             ->size('xs')
                             ->alignCenter()
                             ->extraAttributes(['class' => 'mt-1 mb-1']),
-
-                        // Store Info
-                        Tables\Columns\TextColumn::make('item_organizer')
-                            ->state(fn ($record) => $record->package?->weddingOrganizer?->name ?? $record->product?->weddingOrganizer?->name)
-                            ->color('gray')
-                            ->size('xs')
-                            ->weight('bold')
-                            ->alignCenter(),
 
                         // Package Name
                         Tables\Columns\TextColumn::make('item_name')
@@ -648,11 +640,7 @@ class OrderResource extends Resource
                                     ->hiddenLabel()
                                     ->weight(FontWeight::Bold)
                                     ->size(Infolists\Components\TextEntry\TextEntrySize::Large),
-                                Infolists\Components\TextEntry::make('item_organizer')
-                                    ->state(fn ($record) => $record->package?->weddingOrganizer?->name ?? $record->product?->weddingOrganizer?->name)
-                                    ->hiddenLabel()
-                                    ->icon('govicon-building')
-                                    ->color('gray'),
+                                
                                 Infolists\Components\TextEntry::make('booking_date')
                                     ->label(__('Untuk Tanggal Acara:'))
                                     ->inlineLabel()

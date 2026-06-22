@@ -45,7 +45,7 @@ class CategoryController extends Controller
 
             return response()->json([
                 'status' => 'success',
-                'data' => $categories->products(),
+                'data' => $categories->items(),
                 'pagination' => [
                     'current_page' => $categories->currentPage(),
                     'last_page' => $categories->lastPage(),
@@ -70,8 +70,8 @@ class CategoryController extends Controller
     {
         try {
             $category = Category::with(['packages' => function ($query): void {
-                $query->with(['weddingOrganizer', 'reviews'])->limit(10);
-            }, 'packagesCount'])->findOrFail($id, ['*']);
+                $query->with(['weddingFlowersDecorasi', 'reviews'])->limit(10);
+            }])->withCount('packages')->findOrFail($id, ['*']);
 
             return response()->json([
                 'status' => 'success',
@@ -98,10 +98,10 @@ class CategoryController extends Controller
     {
         try {
             $categories = Category::with(['packages' => function ($query) use ($request): void {
-                $query->with(['weddingOrganizer', 'reviews'])
+                $query->with(['weddingFlowersDecorasi', 'reviews'])
                     ->orderBy('price', 'asc')
                     ->limit($request->get('packages_per_category', 5));
-            }, 'packagesCount'])->get(['*']);
+            }])->withCount('packages')->get(['*']);
 
             return response()->json([
                 'status' => 'success',

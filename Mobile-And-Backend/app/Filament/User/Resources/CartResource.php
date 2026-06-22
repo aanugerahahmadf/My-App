@@ -148,13 +148,6 @@ class CartResource extends Resource
                             ->color('gray')
                             ->extraAttributes(['class' => 'tracking-tight']),
 
-                        // Store Info (Wedding Organizer)
-                        Tables\Columns\TextColumn::make('item.weddingOrganizer.name')
-                            ->color('gray')
-                            ->size('xs')
-                            ->icon('heroicon-o-building-storefront')
-                            ->extraAttributes(['class' => 'mt-1 opacity-75']),
-
                         // Quantity & Price Info (Now with Stock indicator)
                         Tables\Columns\Layout\Stack::make([
                             Tables\Columns\Layout\Split::make([

@@ -54,7 +54,7 @@ NATIVEPHP_HTTP_PORT=8002
 
 # NativePHP app identity
 NATIVEPHP_APP_ID=com.yourcompany.weddingorganizer
-NATIVEPHP_APP_NAME="Wedding Organizer"
+NATIVEPHP_APP_NAME="Wedding Flowers Decorasi"
 NATIVEPHP_APP_VERSION=1.0.0
 ```
 
@@ -149,7 +149,7 @@ Key settings in `config/nativephp.php`:
 
 ```php
 'app_id'      => env('NATIVEPHP_APP_ID', 'com.yourcompany.weddingorganizer'),
-'app_name'    => env('NATIVEPHP_APP_NAME', 'Wedding Organizer'),
+'app_name'    => env('NATIVEPHP_APP_NAME', 'Wedding Flowers Decorasi'),
 'version'     => env('NATIVEPHP_APP_VERSION', '1.0.0'),
 'windows'     => [
     'target'        => ['nsis', 'portable'],

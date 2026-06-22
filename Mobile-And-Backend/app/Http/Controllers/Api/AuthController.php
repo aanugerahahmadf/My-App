@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
+use Spatie\Permission\Models\Role;
 
 class AuthController extends Controller
 {
@@ -185,6 +186,67 @@ class AuthController extends Controller
             'data' => [
                 'token' => 'SOCIAL-TOKEN-'.Str::random(40),
                 'user' => Auth::user() ?: User::first(['*']), // Fallback for simulation
+            ],
+        ]);
+    }
+
+    public function clerkSync(Request $request)
+    {
+        $request->validate([
+            'clerk_id' => 'required|string',
+            'email' => 'required|email',
+            'name' => 'nullable|string|max:255',
+            'avatar_url' => 'nullable|string|max:500',
+            'username' => 'nullable|string|max:255|alpha_dash',
+        ]);
+
+        $clerkId = $request->clerk_id;
+        $email = $request->email;
+
+        $user = User::where('clerk_id', $clerkId)->orWhere('email', $email)->first();
+
+        if ($user) {
+            if (!$user->clerk_id) {
+                $user->update(['clerk_id' => $clerkId]);
+            }
+            if ($request->name && !$user->full_name) {
+                $user->update(['full_name' => $request->name]);
+            }
+            if ($request->avatar_url && !$user->avatar_url) {
+                $user->update(['avatar_url' => $request->avatar_url]);
+            }
+        } else {
+            $username = $request->username ?? 'user_' . Str::random(8);
+            while (User::where('username', $username)->exists()) {
+                $username = 'user_' . Str::random(8);
+            }
+
+            $user = User::create([
+                'clerk_id' => $clerkId,
+                'full_name' => $request->name ?? $email,
+                'username' => $username,
+                'email' => $email,
+                'avatar_url' => $request->avatar_url,
+                'active_status' => true,
+            ]);
+
+            $userRole = Role::where('name', 'user')->first();
+            if ($userRole) {
+                $user->assignRole($userRole);
+            }
+        }
+
+        if (!$user->active_status) {
+            $user->update(['active_status' => true]);
+        }
+
+        $token = $user->createToken('clerk-sync')->plainTextToken;
+
+        return response()->json([
+            'status' => 'success',
+            'data' => [
+                'token' => $token,
+                'user' => $user,
             ],
         ]);
     }

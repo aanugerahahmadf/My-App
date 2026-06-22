@@ -23,7 +23,6 @@
                     'price' => $pkg->price,
                     'discount_price' => $pkg->discount_price,
                     'image_url' => $pkg->image_url,
-                    'wedding_organizer' => $pkg->weddingOrganizer ? ['name' => $pkg->weddingOrganizer->name] : null,
                     'category' => $pkg->category ? ['name' => $pkg->category->name] : null,
                 ]
             ];
@@ -38,7 +37,6 @@
                     'price' => $prd->price,
                     'discount_price' => $prd->discount_price,
                     'image_url' => $prd->image_url,
-                    'wedding_organizer' => $prd->weddingOrganizer ? ['name' => $prd->weddingOrganizer->name] : null,
                     'category' => $prd->category ? ['name' => $prd->category->name] : null,
                 ]
             ];

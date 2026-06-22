@@ -33,12 +33,10 @@ use Illuminate\Support\Carbon;
  * @method static \Illuminate\Database\Eloquent\Collection<int, \App\Models\Review> get(array|string $columns = ['*'])
  *
  * @property int $userId
- * @property int $weddingOrganizerId
  * @property int|null $packageId
  * @property Carbon|null $createdAt
  * @property Carbon|null $updatedAt
  *
- * @method static \Illuminate\Database\Eloquent\Builder<static>|\App\Models\Review whereWeddingOrganizerId($value)
  *
  * @mixin \Eloquent
  */

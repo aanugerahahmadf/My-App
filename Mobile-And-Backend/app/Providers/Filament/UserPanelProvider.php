@@ -16,6 +16,7 @@ use App\Filament\User\Resources\CartResource;
 use App\Filament\User\Resources\OrderResource;
 use App\Filament\User\Resources\ReviewResource;
 use App\Http\Middleware\MidtransCspMiddleware;
+use App\Http\Middleware\ClerkFilamentAuth;
 use App\Http\Middleware\SetLocale;
 use Filament\Enums\ThemeMode;
 use Filament\Http\Middleware\Authenticate;
@@ -104,6 +105,7 @@ class UserPanelProvider extends PanelProvider
                     ->visible(fn (): bool => Auth::check()),
             ])
             ->middleware([
+                ClerkFilamentAuth::class,
                 MidtransCspMiddleware::class,
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,

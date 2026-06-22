@@ -253,15 +253,13 @@ class ProfileController extends Controller
                     'unread_notifications' => $user->unreadNotifications()->count(),
                     'total_spent' => $user->orders()->sum('total_price'),
                 ],
-                'upcoming_events' => $user->orders()
-                    ->with(['package.weddingOrganizer'])
+                'upcoming_events' => $user->orders()->with(['package.weddingFlowersDecorasi'])
                     ->where('booking_date', '>=', now())
                     ->whereNotIn('status', ['cancelled', 'completed'])
                     ->orderBy('booking_date')
                     ->limit(5)
                     ->get(['*']),
-                'recent_orders' => $user->orders()
-                    ->with(['package.weddingOrganizer'])
+                'recent_orders' => $user->orders()->with(['package.weddingFlowersDecorasi'])
                     ->latest()
                     ->limit(5)
                     ->get(['*']),
@@ -369,7 +367,7 @@ class ProfileController extends Controller
                 ], 401);
             }
 
-            $query = $user->wishlists()->with(['package.weddingOrganizer', 'package.category', 'package.reviews']);
+            $query = $user->wishlists()->with(['package.weddingFlowersDecorasi', 'package.category', 'package.reviews']);
 
             // Apply sorting
             $sortBy = $request->get('sort_by', 'created_at');
@@ -391,7 +389,7 @@ class ProfileController extends Controller
 
             return response()->json([
                 'status' => 'success',
-                'data' => $wishlistItems->products(),
+                'data' => $wishlistItems->items(),
                 'pagination' => [
                     'current_page' => $wishlistItems->currentPage(),
                     'last_page' => $wishlistItems->lastPage(),

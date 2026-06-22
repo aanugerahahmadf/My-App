@@ -28,7 +28,7 @@ class ReviewResource extends Resource
 
     public static function getGloballySearchableAttributes(): array
     {
-        return ['package.name', 'product.name', 'comment', 'weddingOrganizer.name'];
+        return ['package.name', 'product.name', 'comment'];
     }
 
     public static function getGlobalSearchResultTitle(Model $record): string
@@ -111,7 +111,7 @@ class ReviewResource extends Resource
                     ->schema([
                         Forms\Components\Placeholder::make('organizer_info')
                             ->label(__('Informasi Studio'))
-                            ->content(__('Wedding Organizer Devi')),
+                            ->content(__('Wedding Flowers Decorasi Devi')),
                         Forms\Components\Select::make('rating')
                             ->searchable()
                             ->label(__('Berikan Rating Bintang'))

@@ -16,6 +16,7 @@ use App\Filament\Admin\Widgets\RevenueChart;
 use App\Filament\Admin\Widgets\StatsOverview;
 use App\Http\Middleware\MidtransCspMiddleware;
 use App\Http\Middleware\SetLocale;
+use App\Http\Middleware\ClerkFilamentAuth;
 use App\Http\Middleware\SuperAdmin;
 use App\Http\Middleware\VerifyCsrfToken;
 use Filament\Enums\ThemeMode;
@@ -106,6 +107,7 @@ class AdminPanelProvider extends PanelProvider
                 RecentOrders::class,
             ])
             ->middleware([
+                ClerkFilamentAuth::class,
                 MidtransCspMiddleware::class,
                 VerifyCsrfToken::class,
                 EncryptCookies::class,

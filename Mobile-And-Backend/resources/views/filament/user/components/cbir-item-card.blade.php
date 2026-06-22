@@ -11,10 +11,9 @@
 
         // Jika CBIR hanya return packages, load semua products sebagai fallback
         if (empty($products)) {
-            foreach (\App\Models\Product::where('is_active', true)->with('weddingOrganizer', 'category')->get() as $prd) {
+            foreach (\App\Models\Product::where('is_active', true)->with('category')->get() as $prd) {
                 $products[] = ['type' => 'product', 'similarity' => 0, 'data' => array_merge($prd->toArray(), [
                     'image_url' => $prd->image_url,
-                    'wedding_organizer' => $prd->weddingOrganizer?->toArray(),
                     'category' => $prd->category?->toArray(),
                 ])];
             }
@@ -22,20 +21,19 @@
 
         // Jika CBIR hanya return products, load semua packages sebagai fallback
         if (empty($packages)) {
-            foreach (\App\Models\Package::with('weddingOrganizer', 'category')->get() as $pkg) {
+            foreach (\App\Models\Package::with('category')->get() as $pkg) {
                 $packages[] = ['type' => 'package', 'similarity' => 0, 'data' => array_merge($pkg->toArray(), [
                     'image_url' => $pkg->image_url,
-                    'wedding_organizer' => $pkg->weddingOrganizer?->toArray(),
                     'category' => $pkg->category?->toArray(),
                 ])];
             }
         }
     } else {
-        foreach (\App\Models\Package::with('weddingOrganizer', 'category')->get() as $pkg) {
-            $packages[] = ['type' => 'package', 'similarity' => 0, 'data' => array_merge($pkg->toArray(), ['image_url' => $pkg->image_url, 'wedding_organizer' => $pkg->weddingOrganizer?->toArray(), 'category' => $pkg->category?->toArray()])];
+        foreach (\App\Models\Package::with('category')->get() as $pkg) {
+            $packages[] = ['type' => 'package', 'similarity' => 0, 'data' => array_merge($pkg->toArray(), ['image_url' => $pkg->image_url, 'category' => $pkg->category?->toArray()])];
         }
-        foreach (\App\Models\Product::where('is_active', true)->with('weddingOrganizer', 'category')->get() as $prd) {
-            $products[] = ['type' => 'product', 'similarity' => 0, 'data' => array_merge($prd->toArray(), ['image_url' => $prd->image_url, 'wedding_organizer' => $prd->weddingOrganizer?->toArray(), 'category' => $prd->category?->toArray()])];
+        foreach (\App\Models\Product::where('is_active', true)->with('category')->get() as $prd) {
+            $products[] = ['type' => 'product', 'similarity' => 0, 'data' => array_merge($prd->toArray(), ['image_url' => $prd->image_url, 'category' => $prd->category?->toArray()])];
         }
     }
 @endphp

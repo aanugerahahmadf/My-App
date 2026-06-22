@@ -4,7 +4,6 @@
     $score = $res['similarity'] ?? 0;
     $pct   = number_format($score, 1);
 
-    $woName   = $data['wedding_organizer']['name'] ?? null;
     $category = is_array($data['category'] ?? null) ? ($data['category']['name'] ?? null) : ($data['category'] ?? null);
 
     $url = $type === 'package'
@@ -103,7 +102,7 @@
             </span>
         </div>
 
-        {{-- Footer: rating/wo + stock — selalu di bawah --}}
+        {{-- Footer: rating/weddingFlowersDecorasi + stock — selalu di bawah --}}
         <div style="display:flex;align-items:center;justify-content:space-between;margin-top:auto;padding-top:2px;">
             @if($type === 'package' && $rating !== null)
                 <span style="display:flex;align-items:center;gap:2px;font-size:9px;color:#9ca3af;">
@@ -111,7 +110,7 @@
                     {{ $rating }}
                 </span>
             @else
-                <span style="font-size:9px;color:#6b7280;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:60%;">{{ $woName ?? '' }}</span>
+                <span style="font-size:9px;color:#6b7280;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:60%;"></span>
             @endif
             <span class="{{ $stockClass }}" style="font-size:9px;white-space:nowrap;">{{ $stockLabel }}</span>
         </div>

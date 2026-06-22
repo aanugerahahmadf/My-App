@@ -18,10 +18,11 @@ class ReviewExporter extends Exporter
                 ->label(__('ID')),
             ExportColumn::make('user_id')
                 ->label(__('ID Pengguna')),
-            ExportColumn::make('wedding_organizer_id')
-                ->label(__('ID Wedding Organizer')),
+            
             ExportColumn::make('package_id')
                 ->label(__('ID Paket')),
+            ExportColumn::make('wedding_flowers_decorasi_id')
+                ->label(__('ID Wedding Flowers Decorasi')),
             ExportColumn::make('rating')
                 ->label(__('Rating')),
             ExportColumn::make('comment')

@@ -73,7 +73,7 @@ $os = $order->status instanceof OrderStatus
 $orderStatusLabel = $os?->getLabel() ?? (string) $order->status;
 
 $orderUrl   = config('app.url') . '/user/orders';
-$appName    = config('app.name', 'Wedding Organizer');
+$appName    = config('app.name', 'Wedding Flowers Decorasi');
 $userName   = $user->full_name ?? $user->username ?? __('Pelanggan');
 $adminEmail = \App\Models\User::whereHas('roles', fn($q) => $q->where('name','super_admin'))
     ->value('email') ?? config('mail.from.address');

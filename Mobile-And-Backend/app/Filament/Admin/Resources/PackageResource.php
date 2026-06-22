@@ -95,9 +95,7 @@ class PackageResource extends Resource
                                     ->unique(ignorable: fn (?Package $record) => $record)
                                     ->maxLength(255)
                                     ->prefixIcon('heroicon-o-link'),
-                                Forms\Components\Hidden::make('wedding_organizer_id')
-                                    ->default(1)
-                                    ->required(),
+                                
                                 Forms\Components\Select::make('category_id')
                                     ->searchable()
                                     ->label(__('Kategori Dekorasi'))
@@ -204,6 +202,7 @@ class PackageResource extends Resource
                                 Forms\Components\ColorPicker::make('color')
                                     ->label(__('Warna Aksen')),
                             ]),
+                        Forms\Components\Hidden::make('wedding_flowers_decorasi_id'),
                     ])->columnSpan(['lg' => 1]),
             ])->columns(3);
     }

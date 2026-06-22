@@ -42,7 +42,7 @@ VITE_PLATFORM=web
 DB_CONNECTION=mysql
 DB_HOST=127.0.0.1
 DB_PORT=3306
-DB_DATABASE=wedding_organizer
+DB_DATABASE=wedding_flowers_decorasi
 DB_USERNAME=dbuser
 DB_PASSWORD=secret
 

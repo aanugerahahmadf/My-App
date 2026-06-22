@@ -196,6 +196,7 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasName, 
      * @var list<string>
      */
     protected $fillable = [
+        'clerk_id',
         'full_name',
         'first_name',
         'mid_name',

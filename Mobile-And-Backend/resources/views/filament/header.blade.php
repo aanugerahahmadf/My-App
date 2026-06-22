@@ -1,7 +1,7 @@
 @php
     $isMobile = \App\Providers\NativeServiceProvider::isAnyMobile();
-    // Dapatkan ID WO secara dinamis agar tidak 404 jika ID bukan 1
-    $firstWoId = 1;
+    // Dapatkan ID WeddingFlowersDecorasi secara dinamis agar tidak 404 jika ID bukan 1
+    $firstWeddingFlowersDecorasiId = 1;
 @endphp
 <header
     class="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 bg-white border-b border-gray-200 dark:bg-gray-900 dark:border-white/10 sm:px-6 lg:px-6"

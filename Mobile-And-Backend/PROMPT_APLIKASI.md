@@ -125,10 +125,10 @@
 | Model | Fields Kunci | Relasi |
 |-------|-------------|--------|
 | **User** | full_name, username, email, password, phone, whatsapp, address, avatar_url, balance, budget, wedding_date, theme_preference, color_preference, event_concept, dream_venue, ip_address, login_city, login_region, login_country, latitude, longitude, active_status, social_id, social_type, gender | hasMany orders, wishlists, transactions, withdrawals; belongsToMany vouchers |
-| **WeddingOrganizer** | name, slug, description, address, latitude, longitude, rating, is_verified, phone, whatsapp, email, instagram, operational_hours | hasMany packages, products, reviews; mediaCollections: logo, gallery, videos |
+| **WeddingFlowersDecorasi** | name, slug, description, address, latitude, longitude, rating, is_verified, phone, whatsapp, email, instagram, operational_hours | hasMany packages, products, reviews; mediaCollections: logo, gallery, videos |
 | **Category** | name, slug, icon, color, description | hasMany packages |
-| **Package** | wedding_organizer_id, category_id, name, slug, description, price, discount_price, is_featured, features (json), theme, color, min_capacity, max_capacity, stock, article_id | belongsTo category, weddingOrganizer; hasMany orders, reviews, wishlists; mediaCollections: package_image, videos |
-| **Product** | wedding_organizer_id, category_id, name, slug, description, price, discount_price, stock, is_featured | belongsTo category, weddingOrganizer; hasMany orders, reviews, wishlists |
+| **Package** | wedding_flowers_decorasi_id, category_id, name, slug, description, price, discount_price, is_featured, features (json), theme, color, min_capacity, max_capacity, stock, article_id | belongsTo category, weddingFlowersDecorasi; hasMany orders, reviews, wishlists; mediaCollections: package_image, videos |
+| **Product** | wedding_flowers_decorasi_id, category_id, name, slug, description, price, discount_price, stock, is_featured | belongsTo category, weddingFlowersDecorasi; hasMany orders, reviews, wishlists |
 | **Banner** | title, description, image, link, sort_order, is_active | - |
 
 ### Commerce Models
@@ -197,8 +197,8 @@
 | POST | `/api/reset-password` | AuthController | Reset password |
 | POST | `/api/auth/send-otp` | AuthController | Kirim OTP via email |
 | POST | `/api/auth/verify-otp` | AuthController | Verifikasi kode OTP |
-| GET | `/api/organizers/public` | WeddingOrganizerController | List WO publik |
-| GET | `/api/organizers/public/{id}` | WeddingOrganizerController | Detail WO |
+| GET | `/api/organizers/public` | WeddingFlowersDecorasiController | List WeddingFlowersDecorasi publik |
+| GET | `/api/organizers/public/{id}` | WeddingFlowersDecorasiController | Detail WeddingFlowersDecorasi |
 | GET | `/api/packages/public` | PackageController | List paket publik |
 | GET | `/api/legal/terms` | LegalController | Terms of Service |
 | GET | `/api/legal/privacy` | LegalController | Privacy Policy |
@@ -546,7 +546,7 @@
 
 ### 11. GeoLocation & Maps
 - **Login Tracking**: IP geolocation via ip-api.com (city, region, country)
-- **Auto-Geocoding**: WeddingOrganizer address → lat/lng via Nominatim (OpenStreetMap)
+- **Auto-Geocoding**: WeddingFlowersDecorasi address → lat/lng via Nominatim (OpenStreetMap)
 - **Nearby Search**: Cari organizer terdekat (filter by coordinates)
 
 ### 12. MCP Server (AI Agent)
@@ -759,8 +759,8 @@ php artisan test
 
 ## 📌 KEY BUSINESS RULES
 
-1. **Single Vendor**: Hanya 1 record WeddingOrganizer boleh ada. Jika coba buat baru, throw Exception.
-2. **Auto-Geocoding**: Saat address WO diubah, otomatis cari coordinates via Nominatim (timeout 5s, silent fail)
+1. **Single Vendor**: Hanya 1 record WeddingFlowersDecorasi boleh ada. Jika coba buat baru, throw Exception.
+2. **Auto-Geocoding**: Saat address WeddingFlowersDecorasi diubah, otomatis cari coordinates via Nominatim (timeout 5s, silent fail)
 3. **Order Number**: Format otomatis (ORD-timestamp-random)
 4. **Midtrans Order ID**: Format `MID-{Timestamp}-{ID}` untuk tracking
 5. **24 Jam Expiry**: Semua transaksi Midtrans expire dalam 24 jam

@@ -117,6 +117,10 @@ Route::middleware('auth:sanctum')->group(function (): void {
     Route::post('/profile/avatar', [ProfileController::class, 'updateAvatar']);
     Route::post('/profile/change-password', [ProfileController::class, 'changePassword']);
     Route::get('/profile/dashboard', [ProfileController::class, 'dashboard']);
+    Route::put('/profile/nik', [ProfileController::class, 'updateNik']);
+    Route::post('/profile/ktp-photo', [ProfileController::class, 'uploadKtp']);
+    Route::post('/profile/selfie', [ProfileController::class, 'uploadSelfie']);
+    Route::get('/profile/completion', [ProfileController::class, 'completion']);
 
     // Cart
     Route::get('/cart', [CartController::class, 'index']);

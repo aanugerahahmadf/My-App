@@ -207,6 +207,10 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasName, 
         'avatar_url',
         'phone',
         'whatsapp',
+        'nik',
+        'ktp_photo',
+        'selfie_photo',
+        'identity_verified_at',
         'address',
         'ip_address',
         'login_city',
@@ -233,6 +237,8 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasName, 
      */
     protected $appends = [
         'avatar_url',
+        'ktp_photo_url',
+        'selfie_photo_url',
     ];
 
     /**
@@ -254,6 +260,7 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasName, 
     {
         return [
             'email_verified_at' => 'datetime',
+            'identity_verified_at' => 'datetime',
             'password' => 'hashed',
             'wedding_date' => 'date',
             'budget' => 'decimal:2',
@@ -286,6 +293,48 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasName, 
         return Attribute::make(
             get: function ($value) {
                 $path = $value ?: $this->avatar;
+
+                if (! $path) {
+                    return null;
+                }
+
+                if (filter_var($path, FILTER_VALIDATE_URL)) {
+                    return $path;
+                }
+
+                $cleanPath = ltrim(str_replace('storage/', '', $path), '/');
+
+                return asset('storage/'.$cleanPath);
+            }
+        );
+    }
+
+    protected function ktpPhotoUrl(): Attribute
+    {
+        return Attribute::make(
+            get: function ($value) {
+                $path = $this->ktp_photo;
+
+                if (! $path) {
+                    return null;
+                }
+
+                if (filter_var($path, FILTER_VALIDATE_URL)) {
+                    return $path;
+                }
+
+                $cleanPath = ltrim(str_replace('storage/', '', $path), '/');
+
+                return asset('storage/'.$cleanPath);
+            }
+        );
+    }
+
+    protected function selfiePhotoUrl(): Attribute
+    {
+        return Attribute::make(
+            get: function ($value) {
+                $path = $this->selfie_photo;
 
                 if (! $path) {
                     return null;

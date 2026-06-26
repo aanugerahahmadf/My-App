@@ -352,6 +352,189 @@ class ProfileController extends Controller
     }
 
     /**
+     * Update NIK (Nomor Induk Kependudukan)
+     */
+    public function updateNik(Request $request)
+    {
+        try {
+            $request->validate([
+                'nik' => 'required|string|size:16',
+            ]);
+
+            /** @var User $user */
+            $user = Auth::user();
+            $user->update(['nik' => $request->nik]);
+
+            return response()->json([
+                'status' => 'success',
+                'message' => __('NIK berhasil diperbarui'),
+                'data' => $user->fresh(),
+            ]);
+        } catch (ValidationException $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => __('Validasi gagal'),
+                'errors' => $e->errors(),
+            ], 422);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => __('Gagal memperbarui NIK'),
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    /**
+     * Upload KTP photo
+     */
+    public function uploadKtp(Request $request)
+    {
+        try {
+            /** @var User $user */
+            $user = Auth::user();
+
+            $request->validate([
+                'ktp_photo' => 'required|image|mimes:jpeg,png,jpg|max:5120', // 5MB max
+            ]);
+
+            if ($user->ktp_photo) {
+                Storage::disk('public')->delete($user->ktp_photo);
+            }
+
+            $fileName = 'ktp_'.$user->id.'_'.time().'.'.$request->file('ktp_photo')->getClientOriginalExtension();
+            $path = $request->file('ktp_photo')->storeAs('ktp-photos', $fileName, 'public');
+
+            $user->update(['ktp_photo' => $path]);
+
+            return response()->json([
+                'status' => 'success',
+                'message' => __('Foto KTP berhasil diunggah'),
+                'data' => [
+                    'ktp_photo' => $user->ktp_photo,
+                    'ktp_photo_url' => $user->ktp_photo_url,
+                ],
+            ]);
+        } catch (ValidationException $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => __('Validasi gagal'),
+                'errors' => $e->errors(),
+            ], 422);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => __('Gagal mengunggah foto KTP'),
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    /**
+     * Upload selfie photo for face verification
+     */
+    public function uploadSelfie(Request $request)
+    {
+        try {
+            /** @var User $user */
+            $user = Auth::user();
+
+            $request->validate([
+                'selfie_photo' => 'required|image|mimes:jpeg,png,jpg|max:5120',
+            ]);
+
+            if ($user->selfie_photo) {
+                Storage::disk('public')->delete($user->selfie_photo);
+            }
+
+            $fileName = 'selfie_'.$user->id.'_'.time().'.'.$request->file('selfie_photo')->getClientOriginalExtension();
+            $path = $request->file('selfie_photo')->storeAs('selfies', $fileName, 'public');
+
+            $user->update([
+                'selfie_photo' => $path,
+                'identity_verified_at' => now(),
+            ]);
+
+            return response()->json([
+                'status' => 'success',
+                'message' => __('Foto selfie berhasil diunggah, identitas terverifikasi'),
+                'data' => [
+                    'selfie_photo' => $user->selfie_photo,
+                    'selfie_photo_url' => $user->selfie_photo_url,
+                    'identity_verified_at' => $user->identity_verified_at,
+                ],
+            ]);
+        } catch (ValidationException $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => __('Validasi gagal'),
+                'errors' => $e->errors(),
+            ], 422);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => __('Gagal mengunggah foto selfie'),
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    /**
+     * Get profile completion percentage
+     */
+    public function completion()
+    {
+        try {
+            /** @var User $user */
+            $user = Auth::user();
+
+            $profileItems = [
+                'full_name' => 15,
+                'username' => 10,
+                'whatsapp' => 15,
+                'avatar_url' => 15,
+                'email_verified_at' => 15,
+                'nik' => 15,
+                'ktp_photo' => 15,
+            ];
+
+            $score = 0;
+            foreach ($profileItems as $field => $weight) {
+                if ($field === 'email_verified_at') {
+                    if ($user->email_verified_at) {
+                        $score += $weight;
+                    }
+                } elseif (! empty($user->$field)) {
+                    $score += $weight;
+                }
+            }
+
+            return response()->json([
+                'status' => 'success',
+                'data' => [
+                    'completion_percent' => $score,
+                    'total_weight' => 100,
+                    'items' => [
+                        'full_name' => ! empty($user->full_name),
+                        'username' => ! empty($user->username),
+                        'whatsapp' => ! empty($user->whatsapp),
+                        'avatar_url' => ! empty($user->avatar_url),
+                        'email_verified' => ! empty($user->email_verified_at),
+                        'nik' => ! empty($user->nik),
+                        'ktp_photo' => ! empty($user->ktp_photo),
+                    ],
+                ],
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => __('Gagal mengambil data kelengkapan profil'),
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    /**
      * Get user's wishlist products
      */
     public function getWishlist(Request $request)

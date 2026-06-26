@@ -139,6 +139,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                       ),
                     ),
                   ),
+                  _buildProfileCompletion(ref),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: AppSizes.md),
                     child: Column(
@@ -156,6 +157,77 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                 ],
               ),
             ),
+    );
+  }
+
+  Widget _buildProfileCompletion(WidgetRef ref) {
+    final pState = ref.watch(profileProvider);
+    final percent = pState.completionPercent;
+    final items = pState.completionItems;
+
+    if (items == null) {
+      ref.read(profileProvider.notifier).fetchCompletion();
+      return const SizedBox.shrink();
+    }
+
+    final missingFields = <String>[
+      if (items['nik'] == false) 'NIK',
+      if (items['ktp_photo'] == false) 'foto_ktp'.tr(),
+      if (items['whatsapp'] == false) 'whatsapp'.tr(),
+      if (items['avatar_url'] == false) 'foto_profil'.tr(),
+    ];
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: AppSizes.md),
+      child: Card(
+        margin: const EdgeInsets.only(bottom: AppSizes.md),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        child: Padding(
+          padding: const EdgeInsets.all(AppSizes.md),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text('kelengkapan_profil'.tr(), style: AppTextStyles.titleSmall),
+                  Text('$percent%', style: AppTextStyles.bodyMedium.copyWith(
+                    color: percent >= 80 ? Colors.green : (percent >= 50 ? Colors.orange : AppColors.primaryColor),
+                    fontWeight: FontWeight.w600,
+                  )),
+                ],
+              ),
+              SizedBox(height: AppSizes.sm),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: LinearProgressIndicator(
+                  value: percent / 100,
+                  minHeight: 10,
+                  backgroundColor: AppColors.secondaryColor.withAlpha(50),
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                    percent >= 80 ? Colors.green : (percent >= 50 ? Colors.orange : AppColors.primaryColor),
+                  ),
+                ),
+              ),
+              if (missingFields.isNotEmpty) ...[
+                SizedBox(height: AppSizes.sm),
+                Text('lengkapi_data'.tr(), style: AppTextStyles.bodySmall.copyWith(color: AppColors.textSecondary)),
+                SizedBox(height: 4),
+                Wrap(
+                  spacing: 6,
+                  runSpacing: 4,
+                  children: missingFields.map((f) => Chip(
+                    label: Text(f, style: const TextStyle(fontSize: 11)),
+                    visualDensity: VisualDensity.compact,
+                    deleteIcon: const Icon(Icons.add, size: 14),
+                    onDeleted: () => context.push('/edit-profile'),
+                  )).toList(),
+                ),
+              ],
+            ],
+          ),
+        ),
+      ),
     );
   }
 

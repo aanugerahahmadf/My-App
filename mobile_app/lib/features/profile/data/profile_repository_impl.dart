@@ -43,4 +43,36 @@ class ProfileRepositoryImpl implements ProfileRepository {
       'new_password_confirmation': newPassword,
     });
   }
+
+  @override
+  Future<void> updateNik(String nik) async {
+    await _dio.put(ApiEndpoints.profileNik, data: {'nik': nik});
+  }
+
+  @override
+  Future<String> uploadKtp(String filePath) async {
+    final formData = FormData.fromMap({
+      'ktp_photo': await MultipartFile.fromFile(filePath),
+    });
+    final response = await _dio.post(ApiEndpoints.profileKtp, data: formData);
+    final d = response.data as Map<String, dynamic>?;
+    return ((d?['data'] as Map<String, dynamic>?)?['ktp_photo_url'] as String?) ?? '';
+  }
+
+  @override
+  Future<Map<String, dynamic>> uploadSelfie(String filePath) async {
+    final formData = FormData.fromMap({
+      'selfie_photo': await MultipartFile.fromFile(filePath),
+    });
+    final response = await _dio.post(ApiEndpoints.profileSelfie, data: formData);
+    final d = response.data as Map<String, dynamic>?;
+    return (d?['data'] as Map<String, dynamic>?) ?? {};
+  }
+
+  @override
+  Future<Map<String, dynamic>> getCompletion() async {
+    final response = await _dio.get(ApiEndpoints.profileCompletion);
+    final d = response.data as Map<String, dynamic>?;
+    return (d?['data'] as Map<String, dynamic>?) ?? {};
+  }
 }

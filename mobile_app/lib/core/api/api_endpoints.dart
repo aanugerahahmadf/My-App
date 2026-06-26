@@ -16,6 +16,10 @@ class ApiEndpoints {
   static const String profileAvatar = '/profile/avatar';
   static const String changePassword = '/profile/change-password';
   static const String dashboard = '/profile/dashboard';
+  static const String profileNik = '/profile/nik';
+  static const String profileKtp = '/profile/ktp-photo';
+  static const String profileSelfie = '/profile/selfie';
+  static const String profileCompletion = '/profile/completion';
 
   // Home & Categories
   static const String home = '/home';

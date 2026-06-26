@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "125956093579",
+    "firebase_url": "https://wedding-flower-decorasi-default-rtdb.firebaseio.com",
+    "project_id": "wedding-flower-decorasi",
+    "storage_bucket": "wedding-flower-decorasi.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:125956093579:android:241e27bb44b40b54c3868e",
+        "android_client_info": {
+          "package_name": "com.example.mobile_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD0o1LaFuIcGTOQrpyMplqbEhPntnKwPFo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -11,12 +11,14 @@ use App\Http\Controllers\Api\FonnteWebhookController;
 use App\Http\Controllers\Api\HistoryController;
 use App\Http\Controllers\Api\HomeController;
 use App\Http\Controllers\Api\LegalController;
+use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\Api\OrderController;
 use App\Http\Controllers\Api\PackageController;
 use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\ProfileController;
 use App\Http\Controllers\Api\ReviewController;
 use App\Http\Controllers\Api\SearchController;
+use App\Http\Controllers\Api\UserLanguageController;
 use App\Http\Controllers\Api\VoucherController;
 use App\Http\Controllers\Api\WalletController;
 use App\Http\Controllers\Api\WishlistController;
@@ -156,6 +158,15 @@ Route::middleware('auth:sanctum')->group(function (): void {
     Route::post('/wishlist/bulk-add', [WishlistController::class, 'bulkAdd']);
     Route::delete('/wishlist/{packageId}', [WishlistController::class, 'removeFromWishlist']);
 
+    // Notifications
+    Route::get('/notifications', [NotificationController::class, 'index']);
+    Route::post('/notifications/{id}/read', [NotificationController::class, 'markAsRead']);
+    Route::post('/notifications/read-all', [NotificationController::class, 'markAllAsRead']);
+
+    // User Language
+    Route::get('/user/language', [UserLanguageController::class, 'show']);
+    Route::put('/user/language', [UserLanguageController::class, 'update']);
+
     // Search
     Route::get('/search', [SearchController::class, 'byText']);
     Route::post('/search/image', [SearchController::class, 'byImage']);
@@ -193,9 +204,6 @@ Route::middleware('auth:sanctum')->group(function (): void {
     // Wallet
     Route::get('/wallet', [WalletController::class, 'getWalletData']);
     Route::get('/wallet/history', [WalletController::class, 'getHistory']);
-    Route::get('/wallet/withdrawal', [WalletController::class, 'getWithdrawalHistory']);
-    Route::post('/wallet/withdrawal', [WalletController::class, 'requestWithdrawal']);
-    Route::get('/wallet/withdrawal/history', [WalletController::class, 'getWithdrawalHistory']);
 
     // CBIR - AI Visual Search
     Route::post('/cbir/search', [CBIRController::class, 'searchSimilar']);

@@ -11,7 +11,7 @@ import '../../../../core/widgets/app_empty_state.dart';
 import '../../../../core/widgets/app_error_state.dart';
 import '../../../../core/api/dio_client.dart';
 import '../../../../core/api/api_endpoints.dart';
-import '../../../search/presentation/pages/search_page.dart';
+import '../../../search/presentation/widgets/global_search_bar.dart';
 import '../../../catalog/presentation/widgets/combined_card.dart';
 import '../../data/models/cbir_result_model.dart';
 import '../providers/cbir_provider.dart';
@@ -69,7 +69,7 @@ class _CbirResultPageState extends ConsumerState<CbirResultPage> {
           Container(
             padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top + AppSizes.sm, left: AppSizes.md, right: AppSizes.md, bottom: AppSizes.md),
             decoration: const BoxDecoration(color: AppColors.primaryColor),
-            child: const SearchPage(),
+            child: const GlobalSearchBar(translucent: true),
           ),
           Expanded(child: _buildBody(context, state)),
         ],

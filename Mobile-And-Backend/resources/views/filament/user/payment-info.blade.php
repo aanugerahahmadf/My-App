@@ -3,7 +3,7 @@
     $url = $method?->qris_image_url;
 @endphp
 
-@if ($type === \App\Enums\PaymentMethodType::QRIS)
+@if ($type === 'qris')
     <div class="flex flex-col items-center py-6 gap-6">
         <x-filament::section
             class="bg-white dark:bg-gray-950 p-6 rounded-3xl border-2 border-primary-100 dark:border-primary-900 shadow-2xl shadow-primary-500/10"

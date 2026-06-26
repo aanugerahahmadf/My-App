@@ -424,5 +424,9 @@
   "biometric_ask_enable": "Aktifkan login biometrik untuk akses lebih cepat?",
   "biometric_not_available": "Autentikasi biometrik tidak tersedia di perangkat ini",
   "biometric_failed": "Autentikasi biometrik gagal",
-  "biometric_simpan": "Ingat login saya dengan biometrik"
+  "biometric_simpan": "Ingat login saya dengan biometrik",
+  "coba_gambar_lain": "Coba gambar lain",
+  "hasil_tidak_ditemukan": "Hasil tidak ditemukan",
+  "keluar": "Keluar",
+  "tidak_ada_produk": "Tidak ada produk tersedia"
 }

@@ -23,10 +23,15 @@ import '../../features/profile/presentation/pages/profile_page.dart';
 import '../../features/profile/presentation/pages/edit_profile_page.dart';
 import '../../features/payment/presentation/pages/midtrans_webview_page.dart';
 import '../../features/review/presentation/pages/my_reviews_page.dart';
+import '../../features/history/presentation/pages/history_page.dart';
 import '../../features/wishlist/presentation/pages/wishlist_page.dart';
+import '../../features/voucher/presentation/pages/voucher_list_page.dart';
+import '../../features/voucher/presentation/pages/voucher_detail_page.dart';
+import '../../features/voucher/data/models/voucher_model.dart';
 import '../../features/catalog/presentation/pages/catalog_combined_page.dart';
 import '../../features/legal/presentation/pages/terms_of_service_page.dart';
 import '../../features/legal/presentation/pages/privacy_policy_page.dart';
+import '../../features/legal/presentation/pages/help_center_page.dart';
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
 
@@ -79,10 +84,18 @@ final appRouter = GoRouter(
     GoRoute(path: '/notifications', builder: (_, _) => const NotificationPage()),
     GoRoute(path: '/edit-profile', builder: (_, _) => const EditProfilePage()),
     GoRoute(path: '/my-reviews', builder: (_, _) => const MyReviewsPage()),
+    GoRoute(path: '/history', builder: (_, _) => const HistoryPage()),
+    GoRoute(path: '/vouchers', builder: (_, _) => const VoucherListPage()),
+    GoRoute(path: '/vouchers/:id', builder: (_, state) {
+      final extra = state.extra as Map<String, dynamic>?;
+      final voucher = extra != null ? VoucherModel.fromJson(extra) : null;
+      return VoucherDetailPage(voucher: voucher ?? VoucherModel(id: 0, code: '', discountAmount: 0, discountType: ''));
+    }),
     GoRoute(path: '/wishlist', builder: (_, _) => const WishlistPage()),
     GoRoute(path: '/catalog', builder: (_, _) => const CatalogCombinedPage()),
     GoRoute(path: '/terms-of-service', builder: (_, _) => const TermsOfServicePage()),
     GoRoute(path: '/privacy-policy', builder: (_, _) => const PrivacyPolicyPage()),
+    GoRoute(path: '/help-center', builder: (_, _) => const HelpCenterPage()),
     GoRoute(
       path: '/payment/:orderId',
       builder: (_, state) => MidtransWebviewPage(orderId: state.pathParameters['orderId']!),

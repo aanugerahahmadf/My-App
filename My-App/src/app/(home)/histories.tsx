@@ -14,10 +14,11 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import { Colors, Spacing } from "@/constants/theme";
+import { Colors, Spacing, BottomTabInset } from "@/constants/theme";
 import { apiGet } from "@/lib/api-client";
 import { API } from "@/lib/endpoints";
 import { useLanguage } from "@/lib/language-context";
+import { StaggeredEntrance } from "@/components/staggered-entrance";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -270,7 +271,8 @@ export default function HistoriesScreen() {
           />
         }
         contentContainerStyle={styles.list}
-        renderItem={({ item }) => (
+        renderItem={({ item, index }) => (
+          <StaggeredEntrance index={index}>
           <Pressable
             style={styles.historyItem}
             onPress={() =>
@@ -377,6 +379,7 @@ export default function HistoriesScreen() {
               </Text>
             </View>
           </Pressable>
+          </StaggeredEntrance>
         )}
         ItemSeparatorComponent={() => <View style={{ height: Spacing.two }} />}
         ListEmptyComponent={
@@ -420,7 +423,7 @@ const styles = StyleSheet.create({
     fontFamily: Platform.OS === "ios" ? "Inter" : "Inter",
   },
 
-  list: { padding: Spacing.three, paddingBottom: Spacing.six },
+  list: { padding: Spacing.three, paddingBottom: BottomTabInset },
 
   historyItem: {
     borderRadius: 16,

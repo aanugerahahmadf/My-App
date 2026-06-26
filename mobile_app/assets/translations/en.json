@@ -424,5 +424,9 @@
   "biometric_ask_enable": "Enable biometric login for faster access?",
   "biometric_not_available": "Biometric authentication is not available on this device",
   "biometric_failed": "Biometric authentication failed",
-  "biometric_simpan": "Remember my login with biometric"
+  "biometric_simpan": "Remember my login with biometric",
+  "coba_gambar_lain": "Try another image",
+  "hasil_tidak_ditemukan": "No results found",
+  "keluar": "Sign Out",
+  "tidak_ada_produk": "No products available"
 }

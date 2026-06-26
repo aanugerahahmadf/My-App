@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Enums\OrderPaymentStatus;
 use App\Enums\OrderStatus;
 use App\Enums\PaymentStatus;
+use App\Enums\TransactionType;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -40,6 +41,7 @@ class Transaction extends Model
         'paid_at' => 'datetime',
         'metadata' => 'json',
         'status' => PaymentStatus::class,
+        'type' => TransactionType::class,
     ];
 
     public function user(): BelongsTo
@@ -59,9 +61,9 @@ class Transaction extends Model
             'paid_at' => now(),
         ]);
 
-        if ($this->type === 'topup') {
+        if ($this->type === TransactionType::TOPUP) {
             $this->user->increment('balance', $this->amount);
-        } elseif ($this->type === 'order' && $this->order) {
+        } elseif ($this->type === TransactionType::ORDER && $this->order) {
             $this->order->update([
                 'status' => OrderStatus::CONFIRMED,
                 'payment_status' => OrderPaymentStatus::PAID,
@@ -93,7 +95,7 @@ class Transaction extends Model
             'notes' => $reason ?? $this->notes,
         ]);
 
-        if ($this->type === 'order' && $this->order) {
+        if ($this->type === TransactionType::ORDER && $this->order) {
             $this->order->update([
                 'payment_status' => OrderPaymentStatus::FAILED,
             ]);

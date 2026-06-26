@@ -30,6 +30,7 @@ export const API = {
   ORDERS: {
     ALL: `${API_BASE}/orders`,
     CREATE: `${API_BASE}/orders`,
+    DETAIL: (id: number) => `${API_BASE}/orders/${id}`,
     PAY: (id: number) => `${API_BASE}/orders/${id}/pay`,
     TRACK: (no: string) => `${API_BASE}/bookings/track/${no}`,
     CANCEL: (id: number) => `${API_BASE}/orders/${id}/cancel`,

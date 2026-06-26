@@ -1,17 +1,15 @@
-﻿import 'dart:io';
-import 'package:easy_localization/easy_localization.dart';
+﻿import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../../../../core/api/api_endpoints.dart';
 import '../../../../core/api/dio_client.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_text_styles.dart';
 import '../../../../core/constants/app_sizes.dart';
-import '../../../../core/widgets/app_bottom_sheet.dart';
 import '../../../../core/widgets/app_shimmer.dart';
+import '../../../search/presentation/widgets/global_search_bar.dart';
 import '../../../../features/catalog/data/catalog_repository_impl.dart';
 import '../../../../features/catalog/data/models/item_model.dart';
 import '../../../../features/catalog/presentation/widgets/combined_card.dart';
@@ -30,7 +28,6 @@ class _HomePageState extends ConsumerState<HomePage> {
   Map<String, dynamic>? _homeData;
   bool _loading = true;
   final _pageController = PageController();
-  final _searchController = TextEditingController();
   List<Map<String, dynamic>> _combinedItems = [];
   bool _catalogLoading = false;
   List<Map<String, dynamic>> _categories = [];
@@ -77,7 +74,6 @@ class _HomePageState extends ConsumerState<HomePage> {
   @override
   void dispose() {
     _pageController.dispose();
-    _searchController.dispose();
     super.dispose();
   }
 
@@ -141,58 +137,6 @@ class _HomePageState extends ConsumerState<HomePage> {
       }
       _startAutoScroll();
     });
-  }
-
-  void _showSearchOptions() {
-    AppBottomSheet.show(
-      context,
-      Column(
-        children: [
-          ListTile(
-            leading: Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: AppColors.primaryLight.withAlpha(77),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: const Icon(Icons.camera_alt, color: AppColors.primaryColor),
-            ),
-            title: Text('ambil_foto'.tr()),
-            subtitle: Text('cari_dekorasi_kamera'.tr()),
-            onTap: () {
-              context.pop();
-              _pickImage(ImageSource.camera);
-            },
-          ),
-          const Divider(),
-          ListTile(
-            leading: Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: AppColors.primaryLight.withAlpha(77),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: const Icon(Icons.photo_library, color: AppColors.primaryColor),
-            ),
-            title: Text('pilih_dari_galeri'.tr()),
-            subtitle: Text('gunakan_foto_galeri'.tr()),
-            onTap: () {
-              context.pop();
-              _pickImage(ImageSource.gallery);
-            },
-          ),
-        ],
-      ),
-      title: 'cari_gambar'.tr(),
-    );
-  }
-
-  Future<void> _pickImage(ImageSource source) async {
-    final picker = ImagePicker();
-    final picked = await picker.pickImage(source: source, maxWidth: 1024);
-    if (picked != null && mounted) {
-      context.push('/cbir-result', extra: File(picked.path));
-    }
   }
 
   @override
@@ -317,40 +261,8 @@ class _HomePageState extends ConsumerState<HomePage> {
                 ),
               ],
             ),
-            const SizedBox(height: 16),
-            TextField(
-              controller: _searchController,
-              decoration: InputDecoration(
-                hintText: 'search_hint'.tr(),
-                hintStyle: TextStyle(color: Colors.white.withAlpha(154)),
-                prefixIcon: Icon(Icons.search, color: Colors.white.withAlpha(179)),
-                suffixIcon: IconButton(
-                  icon: Icon(Icons.camera_alt, color: Colors.white.withAlpha(179)),
-                  onPressed: _showSearchOptions,
-                ),
-                filled: true,
-                fillColor: Colors.white.withAlpha(51),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(14),
-                  borderSide: BorderSide.none,
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(14),
-                  borderSide: BorderSide.none,
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(14),
-                  borderSide: BorderSide(color: Colors.white.withAlpha(77)),
-                ),
-              ),
-              style: const TextStyle(color: Colors.white),
-              textInputAction: TextInputAction.search,
-              onSubmitted: (query) {
-                if (query.trim().isNotEmpty) {
-                  context.push('/catalog');
-                }
-              },
-            ),
+            const SizedBox(height: AppSizes.md),
+            const GlobalSearchBar(translucent: true),
           ],
         ),
       ),

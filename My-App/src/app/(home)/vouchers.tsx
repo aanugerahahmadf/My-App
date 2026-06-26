@@ -16,10 +16,11 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import { Colors, Spacing } from "@/constants/theme";
+import { Colors, Spacing, BottomTabInset } from "@/constants/theme";
 import { apiGet, apiPost } from "@/lib/api-client";
 import { API } from "@/lib/endpoints";
 import { useLanguage } from "@/lib/language-context";
+import { StaggeredEntrance } from "@/components/staggered-entrance";
 
 type Voucher = {
   id: number;
@@ -416,7 +417,9 @@ export default function VouchersScreen() {
       <FlatList
         data={displayData}
         keyExtractor={(item) => String(item.id)}
-        renderItem={({ item }) => renderVoucherCard(item, tab === "available")}
+        renderItem={({ item, index }) => (
+          <StaggeredEntrance index={index}>{renderVoucherCard(item, tab === "available")}</StaggeredEntrance>
+        )}
         contentContainerStyle={styles.list}
         refreshControl={
           <RefreshControl
@@ -488,7 +491,7 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     fontFamily: Platform.OS === "ios" ? "Inter" : "Inter",
   },
-  list: { paddingHorizontal: Spacing.three, paddingBottom: Spacing.five },
+  list: { paddingHorizontal: Spacing.three, paddingBottom: BottomTabInset },
   card: {
     borderRadius: 16,
     marginBottom: Spacing.three,

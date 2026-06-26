@@ -18,7 +18,8 @@ import { useRouter } from 'expo-router';
 import { useAuth } from '@clerk/expo';
 import * as ImagePicker from 'expo-image-picker';
 
-import { Colors, Spacing } from '@/constants/theme';
+import { Colors, Spacing, Shadows } from '@/constants/theme';
+import { PressableScale } from '@/components/pressable-scale';
 import { API } from '@/lib/endpoints';
 import { apiGet, apiPost, apiPut, apiDelete, clearSanctumToken } from '@/lib/api-client';
 import { useLanguage } from '@/lib/language-context';
@@ -64,11 +65,16 @@ export default function EditProfileScreen() {
     .toUpperCase();
 
   const [isEditing, setIsEditing] = useState(false);
+  const [isEditingUsername, setIsEditingUsername] = useState(false);
+  const [isEditingPassword, setIsEditingPassword] = useState(false);
 
   // Password
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [passwordConfirmation, setPasswordConfirmation] = useState('');
+  const [showCurrent, setShowCurrent] = useState(false);
+  const [showNew, setShowNew] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
 
   // Delete Account
   const [deletePassword, setDeletePassword] = useState('');
@@ -177,6 +183,7 @@ export default function EditProfileScreen() {
         address,
       });
       Alert.alert(t('Success'), t('Profile updated successfully!'));
+      setIsEditing(false);
     } catch {
       Alert.alert(t('Error'), t('Failed to update profile'));
     } finally {
@@ -194,6 +201,7 @@ export default function EditProfileScreen() {
     try {
       await apiPut(API.PROFILE.UPDATE, { username });
       Alert.alert(t('Success'), t('Username updated successfully!'));
+      setIsEditingUsername(false);
     } catch {
       Alert.alert(t('Error'), t('Failed to update username. It may already be taken.'));
     } finally {
@@ -227,6 +235,7 @@ export default function EditProfileScreen() {
         setCurrentPassword('');
         setNewPassword('');
         setPasswordConfirmation('');
+        setIsEditingPassword(false);
       } else {
         Alert.alert(t('Failed'), res.message || t('Failed to update password'));
       }
@@ -273,9 +282,9 @@ export default function EditProfileScreen() {
     <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]} edges={['top']}>
       {/* Header */}
       <View style={[styles.header, { borderBottomColor: colors.backgroundSelected }]}>
-        <Pressable style={styles.backBtn} onPress={() => router.back()}>
+        <PressableScale style={styles.backBtn} onPress={() => router.back()}>
           <Ionicons name="chevron-back" size={24} color={colors.text} />
-        </Pressable>
+        </PressableScale>
         <Text style={[styles.headerTitle, { color: colors.text }]}>{t('Profile')}</Text>
         <View style={{ width: 40 }} />
       </View>
@@ -310,9 +319,9 @@ export default function EditProfileScreen() {
               )}
             </Pressable>
             {!isEditing && (
-              <Pressable style={styles.editAvatarBtn} onPress={() => setIsEditing(true)}>
-                <Text style={styles.editAvatarText}>{t('Tap to change photo')}</Text>
-              </Pressable>
+            <PressableScale style={styles.editAvatarBtn} onPress={() => setIsEditing(true)}>
+              <Text style={styles.editAvatarText}>{t('Tap to change photo')}</Text>
+            </PressableScale>
             )}
           </View>
 
@@ -359,9 +368,9 @@ export default function EditProfileScreen() {
               </Field>
 
               <View style={styles.editActions}>
-                <Pressable style={[styles.cancelBtn, { borderColor: colors.textSecondary }]} onPress={() => setIsEditing(false)}>
-                  <Text style={[styles.cancelBtnText, { color: colors.text }]}>{t('Cancel')}</Text>
-                </Pressable>
+              <PressableScale style={[styles.cancelBtn, { borderColor: colors.textSecondary }]} onPress={() => setIsEditing(false)}>
+                <Text style={[styles.cancelBtnText, { color: colors.text }]}>{t('Cancel')}</Text>
+              </PressableScale>
                 <SaveButton onPress={handleSavePersonalInfo} loading={savingPersonal} label={t('Save Changes')} style={{ flex: 1 }} />
               </View>
             </>
@@ -372,31 +381,39 @@ export default function EditProfileScreen() {
                 <Text style={[styles.infoValue, { color: colors.text }]}>{fullName || '-'}</Text>
               </View>
               <View style={styles.infoRow}>
+                <Text style={[styles.infoLabel, { color: colors.textSecondary }]}>{t('First Name')}</Text>
+                <Text style={[styles.infoValue, { color: colors.text }]}>{firstName || '-'}</Text>
+              </View>
+              <View style={styles.infoRow}>
+                <Text style={[styles.infoLabel, { color: colors.textSecondary }]}>{t('Middle Name')}</Text>
+                <Text style={[styles.infoValue, { color: colors.text }]}>{midName || '-'}</Text>
+              </View>
+              <View style={styles.infoRow}>
+                <Text style={[styles.infoLabel, { color: colors.textSecondary }]}>{t('Last Name')}</Text>
+                <Text style={[styles.infoValue, { color: colors.text }]}>{lastName || '-'}</Text>
+              </View>
+              <View style={styles.infoRow}>
                 <Text style={[styles.infoLabel, { color: colors.textSecondary }]}>{t('Email')}</Text>
                 <Text style={[styles.infoValue, { color: colors.text }]}>{email || '-'}</Text>
               </View>
-              {whatsapp ? (
-                <View style={styles.infoRow}>
-                  <Text style={[styles.infoLabel, { color: colors.textSecondary }]}>{t('WhatsApp')}</Text>
-                  <Text style={[styles.infoValue, { color: colors.text }]}>{whatsapp}</Text>
-                </View>
-              ) : null}
-              {gender ? (
-                <View style={styles.infoRow}>
-                  <Text style={[styles.infoLabel, { color: colors.textSecondary }]}>{t('Gender')}</Text>
-                  <Text style={[styles.infoValue, { color: colors.text }]}>{gender === 'male' ? t('Male') : t('Female')}</Text>
-                </View>
-              ) : null}
-              {address ? (
-                <View style={styles.infoRow}>
-                  <Text style={[styles.infoLabel, { color: colors.textSecondary }]}>{t('Address')}</Text>
-                  <Text style={[styles.infoValue, { color: colors.text }]}>{address}</Text>
-                </View>
-              ) : null}
-              <Pressable style={styles.editBtn} onPress={() => setIsEditing(true)}>
+              <View style={styles.infoRow}>
+                <Text style={[styles.infoLabel, { color: colors.textSecondary }]}>{t('WhatsApp')}</Text>
+                <Text style={[styles.infoValue, { color: colors.text }]}>{whatsapp || '-'}</Text>
+              </View>
+              <View style={styles.infoRow}>
+                <Text style={[styles.infoLabel, { color: colors.textSecondary }]}>{t('Gender')}</Text>
+                <Text style={[styles.infoValue, { color: colors.text }]}>
+                  {gender ? (gender === 'male' ? t('Male') : t('Female')) : '-'}
+                </Text>
+              </View>
+              <View style={styles.infoRow}>
+                <Text style={[styles.infoLabel, { color: colors.textSecondary }]}>{t('Address')}</Text>
+                <Text style={[styles.infoValue, { color: colors.text }]}>{address || '-'}</Text>
+              </View>
+              <PressableScale style={styles.editBtn} onPress={() => setIsEditing(true)}>
                 <Ionicons name="pencil-outline" size={16} color="#fff" />
                 <Text style={styles.editBtnText}>{t('Edit Profile')}</Text>
-              </Pressable>
+              </PressableScale>
             </View>
           )}
         </SectionCard>
@@ -411,11 +428,30 @@ export default function EditProfileScreen() {
             colors={colors}
           />
 
-          <Field label={t('Username')} required colors={colors}>
-            <TextInput style={[styles.input, { color: colors.text, borderColor: colors.backgroundSelected }]} value={username} onChangeText={setUsername} autoCapitalize="none" placeholder={t('Enter your username')} placeholderTextColor={colors.textSecondary} />
-          </Field>
-
-          <SaveButton onPress={handleSaveUsername} loading={savingUsername} label={t('Save Changes')} bgColor="#8b5cf6" />
+          {isEditingUsername ? (
+            <>
+              <Field label={t('Username')} required colors={colors}>
+                <TextInput style={[styles.input, { color: colors.text, borderColor: colors.backgroundSelected }]} value={username} onChangeText={setUsername} autoCapitalize="none" placeholder={t('Enter your username')} placeholderTextColor={colors.textSecondary} />
+              </Field>
+              <View style={styles.editActions}>
+                <PressableScale style={[styles.cancelBtn, { borderColor: colors.textSecondary }]} onPress={() => setIsEditingUsername(false)}>
+                  <Text style={[styles.cancelBtnText, { color: colors.text }]}>{t('Cancel')}</Text>
+                </PressableScale>
+                <SaveButton onPress={handleSaveUsername} loading={savingUsername} label={t('Save Changes')} bgColor="#8b5cf6" style={{ flex: 1 }} />
+              </View>
+            </>
+          ) : (
+            <View>
+              <View style={styles.infoRow}>
+                <Text style={[styles.infoLabel, { color: colors.textSecondary }]}>{t('Username')}</Text>
+                <Text style={[styles.infoValue, { color: colors.text }]}>{username || '-'}</Text>
+              </View>
+              <PressableScale style={[styles.editBtn, { backgroundColor: '#8b5cf6' }]} onPress={() => setIsEditingUsername(true)}>
+                <Ionicons name="pencil-outline" size={16} color="#fff" />
+                <Text style={styles.editBtnText}>{t('Edit')}</Text>
+              </PressableScale>
+            </View>
+          )}
         </SectionCard>
 
         {/* ═══════ SECTION 3: Update Password ═══════ */}
@@ -428,17 +464,51 @@ export default function EditProfileScreen() {
             colors={colors}
           />
 
-          <Field label={t('Current Password')} required colors={colors}>
-            <TextInput style={[styles.input, { color: colors.text, borderColor: colors.backgroundSelected }]} value={currentPassword} onChangeText={setCurrentPassword} secureTextEntry autoCapitalize="none" placeholder={t('Current password')} placeholderTextColor={colors.textSecondary} />
-          </Field>
-          <Field label={t('New Password')} required colors={colors}>
-            <TextInput style={[styles.input, { color: colors.text, borderColor: colors.backgroundSelected }]} value={newPassword} onChangeText={setNewPassword} secureTextEntry autoCapitalize="none" placeholder={t('New password')} placeholderTextColor={colors.textSecondary} />
-          </Field>
-          <Field label={t('Confirm New Password')} required colors={colors}>
-            <TextInput style={[styles.input, { color: colors.text, borderColor: colors.backgroundSelected }]} value={passwordConfirmation} onChangeText={setPasswordConfirmation} secureTextEntry autoCapitalize="none" placeholder={t('Confirm new password')} placeholderTextColor={colors.textSecondary} />
-          </Field>
-
-          <SaveButton onPress={handleSavePassword} loading={savingPassword} label={t('Save Changes')} bgColor="#eab308" />
+          {isEditingPassword ? (
+            <>
+              <Field label={t('Current Password')} required colors={colors}>
+                <View style={[styles.inputPrefix, { borderColor: colors.backgroundSelected }]}>
+                  <TextInput style={[styles.inputFlex, { color: colors.text }]} value={currentPassword} onChangeText={setCurrentPassword} secureTextEntry={!showCurrent} autoCapitalize="none" placeholder={t('Current password')} placeholderTextColor={colors.textSecondary} />
+                  <Pressable onPress={() => setShowCurrent(!showCurrent)}>
+                    <Ionicons name={showCurrent ? 'eye-off-outline' : 'eye-outline'} size={20} color={colors.textSecondary} />
+                  </Pressable>
+                </View>
+              </Field>
+              <Field label={t('New Password')} required colors={colors}>
+                <View style={[styles.inputPrefix, { borderColor: colors.backgroundSelected }]}>
+                  <TextInput style={[styles.inputFlex, { color: colors.text }]} value={newPassword} onChangeText={setNewPassword} secureTextEntry={!showNew} autoCapitalize="none" placeholder={t('New password')} placeholderTextColor={colors.textSecondary} />
+                  <Pressable onPress={() => setShowNew(!showNew)}>
+                    <Ionicons name={showNew ? 'eye-off-outline' : 'eye-outline'} size={20} color={colors.textSecondary} />
+                  </Pressable>
+                </View>
+              </Field>
+              <Field label={t('Confirm New Password')} required colors={colors}>
+                <View style={[styles.inputPrefix, { borderColor: colors.backgroundSelected }]}>
+                  <TextInput style={[styles.inputFlex, { color: colors.text }]} value={passwordConfirmation} onChangeText={setPasswordConfirmation} secureTextEntry={!showConfirm} autoCapitalize="none" placeholder={t('Confirm new password')} placeholderTextColor={colors.textSecondary} />
+                  <Pressable onPress={() => setShowConfirm(!showConfirm)}>
+                    <Ionicons name={showConfirm ? 'eye-off-outline' : 'eye-outline'} size={20} color={colors.textSecondary} />
+                  </Pressable>
+                </View>
+              </Field>
+              <View style={styles.editActions}>
+                <PressableScale style={[styles.cancelBtn, { borderColor: colors.textSecondary }]} onPress={() => { setIsEditingPassword(false); setCurrentPassword(''); setNewPassword(''); setPasswordConfirmation(''); }}>
+                  <Text style={[styles.cancelBtnText, { color: colors.text }]}>{t('Cancel')}</Text>
+                </PressableScale>
+                <SaveButton onPress={handleSavePassword} loading={savingPassword} label={t('Save Changes')} bgColor="#eab308" style={{ flex: 1 }} />
+              </View>
+            </>
+          ) : (
+            <View>
+              <View style={styles.infoRow}>
+                <Text style={[styles.infoLabel, { color: colors.textSecondary }]}>{t('Password')}</Text>
+                <Text style={[styles.infoValue, { color: colors.textSecondary }]}>••••••••</Text>
+              </View>
+              <PressableScale style={[styles.editBtn, { backgroundColor: '#eab308' }]} onPress={() => setIsEditingPassword(true)}>
+                <Ionicons name="pencil-outline" size={16} color="#fff" />
+                <Text style={styles.editBtnText}>{t('Edit')}</Text>
+              </PressableScale>
+            </View>
+          )}
         </SectionCard>
 
         {/* ═══════ SECTION 4: Browser Sessions ═══════ */}
@@ -472,11 +542,11 @@ export default function EditProfileScreen() {
             </View>
           </View>
 
-          <Pressable style={[styles.saveBtn, { backgroundColor: colors.backgroundSelected, marginTop: Spacing.two }]} onPress={() => {
+          <PressableScale style={[styles.saveBtn, { backgroundColor: colors.backgroundSelected, marginTop: Spacing.two }]} onPress={() => {
             Alert.alert(t('Confirm'), t('Please enter your password to log out of other browser sessions.'));
           }}>
             <Text style={[styles.saveBtnText, { color: colors.text }]}>{t('Log Out Other Browser Sessions')}</Text>
-          </Pressable>
+          </PressableScale>
         </SectionCard>
 
         {/* ═══════ SECTION 6: Delete Account ═══════ */}
@@ -493,9 +563,9 @@ export default function EditProfileScreen() {
             {t('Once your account is deleted, all of its resources and data will be permanently deleted. Before deleting your account, please download any data or information that you wish to retain.')}
           </Text>
 
-          <Pressable style={[styles.saveBtn, { backgroundColor: '#ef4444' }]} onPress={() => setShowDeleteModal(true)}>
+          <PressableScale style={[styles.saveBtn, { backgroundColor: '#ef4444' }]} onPress={() => setShowDeleteModal(true)}>
             <Text style={styles.saveBtnText}>{t('Delete Account')}</Text>
-          </Pressable>
+          </PressableScale>
         </View>
       </ScrollView>
 
@@ -509,12 +579,12 @@ export default function EditProfileScreen() {
             </Text>
             <TextInput style={[styles.input, { color: colors.text, borderColor: colors.backgroundSelected, marginBottom: Spacing.three }]} value={deletePassword} onChangeText={setDeletePassword} secureTextEntry autoCapitalize="none" placeholder={t('Password')} placeholderTextColor={colors.textSecondary} />
             <View style={styles.modalActions}>
-              <Pressable style={[styles.modalBtn, styles.modalCancel, { borderColor: colors.textSecondary }]} onPress={() => { setShowDeleteModal(false); setDeletePassword(''); }}>
+              <PressableScale style={[styles.modalBtn, styles.modalCancel, { borderColor: colors.textSecondary }]} onPress={() => { setShowDeleteModal(false); setDeletePassword(''); }}>
                 <Text style={[styles.modalBtnText, { color: colors.text }]}>{t('Cancel')}</Text>
-              </Pressable>
-              <Pressable style={[styles.modalBtn, styles.modalDanger]} onPress={handleDeleteAccount} disabled={deletingAccount}>
+              </PressableScale>
+              <PressableScale style={[styles.modalBtn, styles.modalDanger]} onPress={handleDeleteAccount} disabled={deletingAccount}>
                 {deletingAccount ? <ActivityIndicator size="small" color="#fff" /> : <Text style={styles.modalBtnTextWhite}>{t('Yes, delete')}</Text>}
-              </Pressable>
+              </PressableScale>
             </View>
           </View>
         </View>
@@ -528,7 +598,7 @@ export default function EditProfileScreen() {
 function SectionCard({ children }: { children: React.ReactNode }) {
   const scheme = useColorScheme();
   const bg = Colors[scheme === 'dark' ? 'dark' : 'light'].backgroundElement;
-  return <View style={[styles.sectionCard, { backgroundColor: bg }]}>{children}</View>;
+  return <View style={[styles.sectionCard, { backgroundColor: bg }, Shadows.sm]}>{children}</View>;
 }
 
 function SectionHeader({ icon, bgColor, title, description, colors }: { icon: React.ReactNode; bgColor: string; title: string; description: string; colors: any }) {
@@ -557,9 +627,9 @@ function Field({ label, required, helperText, colors, children }: { label: strin
 
 function SaveButton({ onPress, loading, label, bgColor, style }: { onPress: () => void; loading: boolean; label: string; bgColor?: string; style?: any }) {
   return (
-    <Pressable style={[styles.saveBtn, bgColor ? { backgroundColor: bgColor } : undefined, style]} onPress={onPress} disabled={loading}>
+    <PressableScale style={[styles.saveBtn, bgColor ? { backgroundColor: bgColor } : undefined, style]} onPress={onPress} disabled={loading}>
       {loading ? <ActivityIndicator size="small" color="#fff" /> : <Text style={styles.saveBtnText}>{label}</Text>}
-    </Pressable>
+    </PressableScale>
   );
 }
 

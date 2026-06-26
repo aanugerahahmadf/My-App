@@ -3,10 +3,8 @@
 namespace App\Console\Commands;
 
 use App\Enums\OrderStatus;
-use App\Enums\WithdrawalStatus;
 use App\Models\Order;
 use App\Models\Transaction;
-use App\Models\Withdrawal;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 
@@ -49,10 +47,9 @@ class DailySummary extends Command
         $this->info("Total Transaksi Berhasil: {$successCount} (Rp ".number_format($successTotal, 2).')');
         $this->newLine();
 
-        $this->sectionTitle('TOPUPS & WITHDRAWALS');
+        $this->sectionTitle('TOPUPS');
         $this->table(['Type', 'Count', 'Total (Rp)'], [
             ['Topup (Berhasil)', Transaction::where('type', 'topup')->whereDate('paid_at', $today)->where('status', 'success')->count(), number_format(Transaction::where('type', 'topup')->whereDate('paid_at', $today)->where('status', 'success')->sum('total_amount'), 2)],
-            ['Withdrawal (Selesai)', Withdrawal::whereDate('updated_at', $today)->where('status', WithdrawalStatus::COMPLETED)->count(), number_format(Withdrawal::whereDate('updated_at', $today)->where('status', WithdrawalStatus::COMPLETED)->sum('amount'), 2)],
         ]);
     }
 

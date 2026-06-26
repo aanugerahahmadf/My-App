@@ -20,8 +20,4 @@ class Bank extends Model
         'is_active' => 'boolean',
     ];
 
-    public function withdrawals()
-    {
-        return $this->hasMany(Withdrawal::class);
-    }
 }

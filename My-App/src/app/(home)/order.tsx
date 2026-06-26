@@ -10,13 +10,16 @@ import {
   Platform,
   Alert,
   useColorScheme,
+  Linking,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import * as WebBrowser from 'expo-web-browser';
 
-import { Colors, Spacing } from '@/constants/theme';
+import { Colors, Spacing, BottomTabInset } from '@/constants/theme';
 import { API } from '@/lib/endpoints';
 import { apiGet, apiPost } from '@/lib/api-client';
+import { StaggeredEntrance } from '@/components/staggered-entrance';
 
 type Order = {
   id: number;
@@ -26,6 +29,7 @@ type Order = {
   quantity: number;
   payment_status: string;
   booking_date: string;
+  user_name?: string;
   package?: { id: number; name: string };
   product?: { id: number; name: string };
 };
@@ -115,12 +119,65 @@ export default function OrderScreen() {
     }
   };
 
-  const renderOrder = ({ item }: { item: Order }) => {
+  const handleShareInvoice = (order: Order) => {
+    const itemName = order.package?.name || order.product?.name || '';
+    const dateStr = order.booking_date
+      ? new Date(order.booking_date).toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' })
+      : '';
+    const msg = `INVOICE #${order.order_number}\nItem: ${itemName}\nTanggal: ${dateStr}\nTotal: Rp ${order.total_price.toLocaleString('id-ID')}\nStatus: ${paymentStatusLabels[order.payment_status] || order.payment_status}`;
+    Linking.openURL(`mailto:?subject=Invoice #${order.order_number}&body=${encodeURIComponent(msg)}`).catch(() =>
+      Alert.alert('Info', 'Aplikasi email tidak tersedia')
+    );
+  };
+
+  const handleSharePayment = (order: Order, via: 'whatsapp' | 'gmail' | 'messages') => {
+    const itemName = order.package?.name || order.product?.name || '';
+    const name = order.user_name || 'Pelanggan';
+    const dateStr = order.booking_date
+      ? new Date(order.booking_date).toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' })
+      : '';
+    const totalStr = `Rp ${order.total_price.toLocaleString('id-ID')}`;
+    const detail = `No. Pesanan: #${order.order_number}\nItem: ${itemName}\nTanggal: ${dateStr}\nTotal: ${totalStr}`;
+
+    const isPaid = order.payment_status === 'paid' || order.payment_status === 'partial';
+    const isCancelled = order.status === 'cancelled' || order.payment_status === 'cancelled';
+
+    let msg: string;
+    if (isCancelled) {
+      msg = `CANCEL/BATAL:\nHALO, ${name} TELAH DI CANCEL\n${detail}`;
+    } else if (isPaid) {
+      msg = `SUDAH DIBAYAR/SUKSES BAYAR/ SUDAH CONFIRM PEMBAYRAN :\nHALO, ${name} ....:\n${detail}`;
+    } else {
+      msg = `BELUM DI BAYAR:\nHALO, ${name} HARUS MELAKUKAN PEMBAYARAN UNTUK:\n${detail}`;
+    }
+
+    switch (via) {
+      case 'whatsapp': {
+        const waUrl = `whatsapp://send?text=${encodeURIComponent(msg)}`;
+        Linking.openURL(waUrl).catch(() => Alert.alert('Info', 'WhatsApp tidak terinstall'));
+        break;
+      }
+      case 'gmail': {
+        const subject = encodeURIComponent(`Pembayaran #${order.order_number} - Dekorasi Bunga Pernikahan`);
+        const gmailUrl = `mailto:?subject=${subject}&body=${encodeURIComponent(msg)}`;
+        Linking.openURL(gmailUrl).catch(() => Alert.alert('Info', 'Aplikasi email tidak tersedia'));
+        break;
+      }
+      case 'messages': {
+        const smsUrl = `sms:?body=${encodeURIComponent(msg)}`;
+        Linking.openURL(smsUrl).catch(() => Alert.alert('Info', 'Aplikasi SMS tidak tersedia'));
+        break;
+      }
+    }
+  };
+
+  const renderOrder = ({ item, index }: { item: Order; index: number }) => {
     const needsPayment =
       item.payment_status === 'unpaid' || item.payment_status === 'pending';
     const isPaying = payingId === item.id;
 
     return (
+      <StaggeredEntrance index={index}>
       <Pressable
         style={[styles.card, { backgroundColor: colors.backgroundElement }]}
       >
@@ -199,20 +256,52 @@ export default function OrderScreen() {
             )}
           </Pressable>
         )}
+
+        <View style={styles.actionRow}>
+          <Pressable
+            style={[styles.actionBtn, { backgroundColor: colors.backgroundSelected }]}
+            onPress={() => handleShareInvoice(item)}
+          >
+            <Ionicons name="document-text-outline" size={16} color={colors.text} />
+            <Text style={[styles.actionLabel, { color: colors.text }]}>Bagikan</Text>
+          </Pressable>
+
+          <Pressable
+            style={styles.shareIcon}
+            onPress={() => handleSharePayment(item, 'whatsapp')}
+          >
+            <Ionicons name="logo-whatsapp" size={20} color="#25D366" />
+          </Pressable>
+
+          <Pressable
+            style={styles.shareIcon}
+            onPress={() => handleSharePayment(item, 'gmail')}
+          >
+            <Ionicons name="mail-outline" size={20} color="#EA4335" />
+          </Pressable>
+
+          <Pressable
+            style={styles.shareIcon}
+            onPress={() => handleSharePayment(item, 'messages')}
+          >
+            <Ionicons name="chatbubble-ellipses-outline" size={20} color={colors.text} />
+          </Pressable>
+        </View>
       </Pressable>
+      </StaggeredEntrance>
     );
   };
 
   if (loading) {
     return (
-      <View style={[styles.center, { backgroundColor: colors.background }]}>
+      <SafeAreaView style={[styles.center, { backgroundColor: colors.background }]}>
         <ActivityIndicator size="large" color={colors.text} />
-      </View>
+      </SafeAreaView>
     );
   }
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.background }]}>
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
       <FlatList
         data={orders}
         renderItem={renderOrder}
@@ -240,7 +329,7 @@ export default function OrderScreen() {
           </View>
         }
       />
-    </View>
+    </SafeAreaView>
   );
 }
 
@@ -252,7 +341,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: Spacing.five,
   },
-  list: { padding: Spacing.three },
+  list: { padding: Spacing.three, paddingBottom: BottomTabInset },
   emptyText: {
     marginTop: Spacing.three,
     fontSize: 14,
@@ -334,5 +423,32 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '700',
     fontFamily: Platform.OS === 'ios' ? 'Inter' : 'Inter',
+  },
+  actionRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: Spacing.two,
+    gap: Spacing.two,
+  },
+  actionBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    flex: 1,
+  },
+  actionLabel: {
+    fontSize: 12,
+    fontWeight: '600',
+    fontFamily: Platform.OS === 'ios' ? 'Inter' : 'Inter',
+  },
+  shareIcon: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });

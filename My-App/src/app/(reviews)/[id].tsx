@@ -19,6 +19,7 @@ import { Colors, Spacing } from '@/constants/theme';
 import { API } from '@/lib/endpoints';
 import { apiGet, apiPut, apiDelete } from '@/lib/api-client';
 import { useLanguage } from '@/lib/language-context';
+import Animated, { FadeIn } from 'react-native-reanimated';
 
 type ReviewItem = {
   id: number;
@@ -148,7 +149,7 @@ export default function ReviewDetailScreen() {
         </Pressable>
       </View>
 
-      <ScrollView contentContainerStyle={styles.content}>
+      <Animated.ScrollView entering={FadeIn.duration(250)} contentContainerStyle={styles.content}>
         {itemObj && (
           <View style={[styles.itemCard, { backgroundColor: colors.backgroundElement }]}>
             {itemObj.image_url ? (
@@ -176,8 +177,7 @@ export default function ReviewDetailScreen() {
 
         {editing ? (
           <>
-            <Text style={[styles.label, { color: colors.text, marginTop: Spacing.three }]}>{t('Rating')}</Text>
-            <View style={styles.starsRow}>
+            <View style={[styles.starsRow, { marginTop: Spacing.three }]}>
               {[1, 2, 3, 4, 5].map((star) => (
                 <Pressable key={star} onPress={() => setEditRating(star)}>
                   <Ionicons
@@ -212,8 +212,7 @@ export default function ReviewDetailScreen() {
           </>
         ) : (
           <>
-            <Text style={[styles.label, { color: colors.text, marginTop: Spacing.three }]}>{t('Rating')}</Text>
-            <View style={styles.starsRow}>
+            <View style={[styles.starsRow, { marginTop: Spacing.three }]}>
               {[1, 2, 3, 4, 5].map((star) => (
                 <Ionicons key={star} name={star <= item.rating ? 'star' : 'star-outline'} size={22} color="#f59e0b" />
               ))}
@@ -233,7 +232,7 @@ export default function ReviewDetailScreen() {
             </Pressable>
           </>
         )}
-      </ScrollView>
+      </Animated.ScrollView>
     </SafeAreaView>
   );
 }

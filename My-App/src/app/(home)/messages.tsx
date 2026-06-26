@@ -12,10 +12,12 @@ import {
   useColorScheme,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { Colors, Spacing } from '@/constants/theme';
+import { Colors, Spacing, BottomTabInset } from '@/constants/theme';
 import { API } from '@/lib/endpoints';
 import { apiGet, apiPost } from '@/lib/api-client';
+import { StaggeredEntrance } from '@/components/staggered-entrance';
 
 type Message = {
   id: number;
@@ -97,7 +99,8 @@ export default function MessagesScreen() {
     fetchConversations();
   }, []);
 
-  const renderConversation = ({ item }: { item: Conversation }) => (
+  const renderConversation = ({ item, index }: { item: Conversation; index: number }) => (
+    <StaggeredEntrance index={index}>
     <Pressable
       style={[
         styles.convCard,
@@ -136,11 +139,12 @@ export default function MessagesScreen() {
         </View>
       )}
     </Pressable>
+    </StaggeredEntrance>
   );
 
   if (!activeConv) {
     return (
-      <View style={[styles.container, { backgroundColor: colors.background }]}>
+      <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
         {loading ? (
           <View style={styles.center}>
             <ActivityIndicator size="large" color={colors.text} />
@@ -170,13 +174,14 @@ export default function MessagesScreen() {
             }
           />
         )}
-      </View>
+      </SafeAreaView>
     );
   }
 
   return (
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
     <KeyboardAvoidingView
-      style={[styles.container, { backgroundColor: colors.background }]}
+      style={{ flex: 1 }}
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
     >
@@ -252,6 +257,7 @@ export default function MessagesScreen() {
         </Pressable>
       </View>
     </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 }
 
@@ -263,7 +269,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: Spacing.five,
   },
-  list: { padding: Spacing.three },
+  list: { padding: Spacing.three, paddingBottom: BottomTabInset },
   emptyText: {
     marginTop: Spacing.three,
     fontSize: 14,

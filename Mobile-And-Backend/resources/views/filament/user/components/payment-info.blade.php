@@ -10,7 +10,7 @@
     >
         <div class="flex items-center gap-5 mb-5 p-2 bg-white dark:bg-gray-950 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm">
             <div class="p-4 bg-primary-100 dark:bg-primary-950/50 rounded-xl text-primary-600 dark:text-primary-400">
-                @if($method->type === \App\Enums\PaymentMethodType::BANK_TRANSFER)
+                @if($method->type === 'bank_transfer')
                     <x-filament::icon icon="heroicon-o-building-library" class="w-8 h-8" />
                 @else
                     <x-filament::icon icon="heroicon-o-device-phone-mobile" class="w-8 h-8" />

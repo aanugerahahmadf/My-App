@@ -12,7 +12,8 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
-import { Colors, Spacing } from '@/constants/theme';
+import { Colors, Spacing, BottomTabInset } from '@/constants/theme';
+import { StaggeredEntrance } from '@/components/staggered-entrance';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const COLUMN_COUNT = 2;
@@ -33,14 +34,21 @@ type CbirGridProps = {
   loading: boolean;
   error?: string;
   onPress?: (item: CbirItem) => void;
+  onToggleWishlist?: (item: CbirItem) => void;
+  wishlistIds?: Set<string>;
   refreshControl?: React.ReactElement<RefreshControlProps>;
 };
 
-export default function CbirGrid({ items, loading, error, onPress, refreshControl }: CbirGridProps) {
+export default function CbirGrid({ items, loading, error, onPress, onToggleWishlist, wishlistIds, refreshControl }: CbirGridProps) {
   const scheme = useColorScheme();
   const colors = Colors[scheme === 'dark' ? 'dark' : 'light'];
 
-  const renderItem = ({ item }: { item: CbirItem }) => (
+  const renderItem = ({ item, index }: { item: CbirItem; index: number }) => {
+    const key = `${item.type}-${item.id}`;
+    const isWished = wishlistIds?.has(key) ?? false;
+
+    return (
+    <StaggeredEntrance index={index} offset={50}>
     <Pressable
       style={[
         styles.card,
@@ -56,6 +64,19 @@ export default function CbirGrid({ items, loading, error, onPress, refreshContro
         style={styles.image}
         resizeMode="cover"
       />
+      {onToggleWishlist && (
+        <Pressable
+          style={styles.wishlistBtn}
+          onPress={(e) => { e.stopPropagation?.(); onToggleWishlist(item); }}
+          hitSlop={8}
+        >
+          <Ionicons
+            name={isWished ? 'heart' : 'heart-outline'}
+            size={16}
+            color={isWished ? '#ef4444' : '#fff'}
+          />
+        </Pressable>
+      )}
       <View style={styles.cardContent}>
         {item.similarity !== undefined && (
           <View style={styles.similarityBadge}>
@@ -80,7 +101,9 @@ export default function CbirGrid({ items, loading, error, onPress, refreshContro
         </Text>
       </View>
     </Pressable>
-  );
+    </StaggeredEntrance>
+    );
+  };
 
   if (loading) {
     return (
@@ -152,6 +175,7 @@ const styles = StyleSheet.create({
   },
   listContent: {
     padding: Spacing.three,
+    paddingBottom: BottomTabInset,
   },
   row: {
     gap: ITEM_GAP,
@@ -204,5 +228,17 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '700',
     color: '#ef4444',
+  },
+  wishlistBtn: {
+    position: 'absolute',
+    top: 6,
+    right: 6,
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    backgroundColor: 'rgba(0,0,0,0.35)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 10,
   },
 });

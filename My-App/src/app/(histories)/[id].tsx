@@ -15,6 +15,7 @@ import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Colors, Spacing } from '@/constants/theme';
 import { API } from '@/lib/endpoints';
 import { apiGet } from '@/lib/api-client';
+import Animated, { FadeIn } from 'react-native-reanimated';
 
 type OrderItem = {
   id: number;
@@ -142,7 +143,7 @@ export default function HistoryDetailScreen() {
         <View style={{ width: 40 }} />
       </View>
 
-      <ScrollView contentContainerStyle={styles.content}>
+      <Animated.ScrollView entering={FadeIn.duration(250)} contentContainerStyle={styles.content}>
         <View style={[styles.iconBanner, { backgroundColor: iconColor + '18' }]}>
           <Ionicons name={iconName} size={40} color={iconColor} />
         </View>
@@ -190,13 +191,10 @@ export default function HistoryDetailScreen() {
               <Text style={[styles.title, { color: colors.text }]}>
                 Review {r.package?.name || r.product?.name}
               </Text>
-              <View style={styles.row}>
-                <Text style={styles.label}>Rating</Text>
-                <View style={{ flexDirection: 'row', gap: 2 }}>
-                  {[1, 2, 3, 4, 5].map((s) => (
-                    <Ionicons key={s} name={s <= (r.rating || 0) ? 'star' : 'star-outline'} size={18} color="#f59e0b" />
-                  ))}
-                </View>
+              <View style={{ flexDirection: 'row', gap: 2, marginTop: 4 }}>
+                {[1, 2, 3, 4, 5].map((s) => (
+                  <Ionicons key={s} name={s <= (r.rating || 0) ? 'star' : 'star-outline'} size={18} color="#f59e0b" />
+                ))}
               </View>
               {r.comment && (
                 <>
@@ -258,7 +256,7 @@ export default function HistoryDetailScreen() {
             </>
           );
         })()}
-      </ScrollView>
+      </Animated.ScrollView>
     </SafeAreaView>
   );
 }

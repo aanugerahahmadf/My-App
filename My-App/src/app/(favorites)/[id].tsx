@@ -19,6 +19,7 @@ import { Colors, Spacing } from '@/constants/theme';
 import { API } from '@/lib/endpoints';
 import { apiGet, apiPost } from '@/lib/api-client';
 import { useLanguage } from '@/lib/language-context';
+import Animated, { FadeIn } from 'react-native-reanimated';
 
 type FavoriteItem = {
   id: number;
@@ -132,7 +133,7 @@ export default function FavoriteDetailScreen() {
         </Pressable>
       </View>
 
-      <ScrollView contentContainerStyle={styles.content}>
+      <Animated.ScrollView entering={FadeIn.duration(250)} contentContainerStyle={styles.content}>
         {item.image ? (
           <Image source={{ uri: item.image }} style={styles.image} resizeMode="cover" />
         ) : (
@@ -156,7 +157,7 @@ export default function FavoriteDetailScreen() {
           <Ionicons name="heart-dislike" size={16} color="#fff" />
           <Text style={styles.removeText}>{t('Remove from Favorites')}</Text>
         </Pressable>
-      </ScrollView>
+      </Animated.ScrollView>
     </SafeAreaView>
   );
 }

@@ -1,6 +1,8 @@
 import { useEffect, useState, useCallback } from 'react';
-import { View, Text, StyleSheet, Platform, useColorScheme } from 'react-native';
-import { useLocalSearchParams } from 'expo-router';
+import { View, Text, Pressable, StyleSheet, Platform, useColorScheme } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 
 import { Colors, Spacing } from '@/constants/theme';
 import { API } from '@/lib/endpoints';
@@ -19,6 +21,13 @@ export default function CbirScreen() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | undefined>();
   const [title, setTitle] = useState('');
+  const [wishlistIds, setWishlistIds] = useState<Set<string>>(new Set());
+  const router = useRouter();
+
+  const handlePress = useCallback((item: CbirItem) => {
+    const route = item.type === 'package' ? `/(packages)/${item.id}` : `/(products)/${item.id}`;
+    router.push(route as any);
+  }, [router]);
 
   const mapItem = (p: any): CbirItem => {
     const src = p.data || p;
@@ -36,6 +45,11 @@ export default function CbirScreen() {
     setLoading(true);
     setError(undefined);
     try {
+      const wishRes: any = await apiGet(API.WISHLIST.INDEX).catch(() => ({ data: [] }));
+      const wl: any[] = wishRes?.data || wishRes || [];
+      const wlIds = new Set<string>(wl.map((w: any) => `${w.resource_type || w.type || 'product'}-${w.product_id || w.package_id || w.id}`));
+      setWishlistIds(wlIds);
+
       if (filter === 'package') {
         const res: any = await apiGet(API.PACKAGES.ALL);
         const list = res.data || res || [];
@@ -123,33 +137,56 @@ export default function CbirScreen() {
     }
   }, [q, image, filter]);
 
+  const toggleWishlist = useCallback(async (item: CbirItem) => {
+    const key = `${item.type}-${item.id}`;
+    try {
+      const body: any = {};
+      if (item.type === 'product') body.product_id = item.id;
+      else body.package_id = item.id;
+      await apiPost(API.WISHLIST.TOGGLE, body);
+      setWishlistIds((prev) => {
+        const next = new Set(prev);
+        if (next.has(key)) next.delete(key);
+        else next.add(key);
+        return next;
+      });
+    } catch {}
+  }, []);
+
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     performSearch();
   }, [performSearch]);
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.background }]}>
-      <View style={styles.header}>
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+      <View style={[styles.header, { borderBottomColor: colors.backgroundSelected }]}>
+        <Pressable onPress={() => router.back()} style={styles.backBtn}>
+          <Ionicons name="chevron-back" size={24} color={colors.text} />
+        </Pressable>
         <Text style={[styles.title, { color: colors.text }]}>
           {title || 'Content Based Image Retrieval'}
         </Text>
+        <View style={{ width: 40 }} />
       </View>
-      <CbirGrid items={items} loading={loading} error={error} />
-    </View>
+      <CbirGrid items={items} loading={loading} error={error} onPress={handlePress} onToggleWishlist={toggleWishlist} wishlistIds={wishlistIds} />
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
   header: {
-    padding: Spacing.three,
-    paddingBottom: Spacing.two,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: Spacing.three,
+    paddingVertical: Spacing.three,
     borderBottomWidth: 1,
-    borderBottomColor: 'rgba(128,128,128,0.2)',
   },
+  backBtn: { width: 40, alignItems: 'flex-start' },
   title: {
-    fontSize: 18,
+    fontSize: 17,
     fontWeight: '700',
     fontFamily: Platform.OS === 'ios' ? 'Inter' : 'Inter',
   },

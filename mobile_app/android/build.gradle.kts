@@ -1,3 +1,5 @@
+apply(from = "override_compile_sdk.gradle")
+
 allprojects {
     repositories {
         google()

@@ -29,6 +29,7 @@ class OrderController extends Controller
                 ->with([
                     'package' => function ($q): void { $q->with('weddingFlowersDecorasi:id,name,rating'); },
                     'product.category',
+                    'user:id,full_name',
                 ]);
 
             if ($request->has('status')) {
@@ -53,6 +54,7 @@ class OrderController extends Controller
                 return [
                     'id' => $order->id,
                     'user_id' => $order->user_id,
+                    'user_name' => $order->user?->full_name ?? '',
                     'package_id' => $order->package_id,
                     'product_id' => $order->product_id,
                     'title' => $pkg?->name ?? $order->product?->name ?? __('Pesanan'),

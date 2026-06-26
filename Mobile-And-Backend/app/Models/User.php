@@ -307,14 +307,6 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasName, 
         return $this->hasMany(Transaction::class);
     }
 
-    /**
-     * Get the user's withdrawals.
-     */
-    public function withdrawals()
-    {
-        return $this->hasMany(Withdrawal::class);
-    }
-
     public function vouchers()
     {
         return $this->belongsToMany(Voucher::class, 'user_vouchers')

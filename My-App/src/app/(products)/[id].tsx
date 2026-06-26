@@ -19,6 +19,7 @@ import { Colors, Spacing } from '@/constants/theme';
 import { API } from '@/lib/endpoints';
 import { apiGet, apiPost } from '@/lib/api-client';
 import { useLanguage } from '@/lib/language-context';
+import Animated, { FadeIn } from 'react-native-reanimated';
 
 type ProductItem = {
   id: number;
@@ -79,13 +80,8 @@ export default function ProductDetailScreen() {
     }
   };
 
-  const buyNow = async () => {
-    try {
-      await apiPost(API.CART.ADD, { product_id: parseInt(id!, 10), quantity: 1 });
-      router.push('/(home)/cart' as any);
-    } catch (e: any) {
-      Alert.alert(t('Error'), e.message || t('Failed to process purchase'));
-    }
+  const buyNow = () => {
+    router.push(`/(checkout)/product/${id}` as any);
   };
 
   const chatAdmin = async () => {
@@ -148,7 +144,7 @@ export default function ProductDetailScreen() {
         <View style={{ width: 40 }} />
       </View>
 
-      <ScrollView contentContainerStyle={styles.content}>
+      <Animated.ScrollView entering={FadeIn.duration(250)} contentContainerStyle={styles.content}>
         {item.image_url ? (
           <Image source={{ uri: item.image_url }} style={styles.image} resizeMode="cover" />
         ) : (
@@ -196,24 +192,26 @@ export default function ProductDetailScreen() {
             <Text style={[styles.description, { color: colors.textSecondary }]}>{item.description}</Text>
           </>
         )}
-      </ScrollView>
+      </Animated.ScrollView>
 
       <View style={[styles.bottomBar, { backgroundColor: colors.background, borderTopColor: colors.backgroundSelected }]}>
-        <Pressable onPress={addToCart} style={styles.actionBtn}>
-          <Ionicons name="cart-outline" size={22} color={colors.text} />
-          <Text style={[styles.actionLabel, { color: colors.text }]}>{t('Cart')}</Text>
-        </Pressable>
+        <View style={styles.bottomLeft}>
+          <Pressable onPress={addToCart} style={styles.actionBtn}>
+            <Ionicons name="cart-outline" size={22} color={colors.text} />
+            <Text style={[styles.actionLabel, { color: colors.text }]}>{t('Cart')}</Text>
+          </Pressable>
+          <Pressable onPress={chatAdmin} style={styles.actionBtn}>
+            <Ionicons name="chatbubble-ellipses-outline" size={22} color={colors.text} />
+            <Text style={[styles.actionLabel, { color: colors.text }]}>{t('Chat')}</Text>
+          </Pressable>
+          <Pressable onPress={toggleWishlist} style={styles.actionBtn}>
+            <Ionicons name={isWishlist ? 'heart' : 'heart-outline'} size={22} color={isWishlist ? '#ef4444' : colors.text} />
+            <Text style={[styles.actionLabel, { color: isWishlist ? '#ef4444' : colors.text }]}>{t('Favorite')}</Text>
+          </Pressable>
+        </View>
         <Pressable onPress={buyNow} style={[styles.actionBtn, styles.buyBtn]}>
           <Ionicons name="bag-handle-outline" size={22} color="#fff" />
           <Text style={styles.buyLabel}>{t('Buy Now')}</Text>
-        </Pressable>
-        <Pressable onPress={chatAdmin} style={styles.actionBtn}>
-          <Ionicons name="chatbubble-ellipses-outline" size={22} color={colors.text} />
-          <Text style={[styles.actionLabel, { color: colors.text }]}>{t('Chat')}</Text>
-        </Pressable>
-        <Pressable onPress={toggleWishlist} style={styles.actionBtn}>
-          <Ionicons name={isWishlist ? 'heart' : 'heart-outline'} size={22} color={isWishlist ? '#ef4444' : colors.text} />
-          <Text style={[styles.actionLabel, { color: isWishlist ? '#ef4444' : colors.text }]}>{t('Favorite')}</Text>
         </Pressable>
       </View>
     </SafeAreaView>
@@ -254,10 +252,15 @@ const styles = StyleSheet.create({
   bottomBar: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-around',
+    justifyContent: 'space-between',
     paddingVertical: Spacing.two,
     paddingHorizontal: Spacing.three,
     borderTopWidth: 1,
+  },
+  bottomLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.two,
   },
   actionBtn: { alignItems: 'center', gap: 4, paddingVertical: 4, paddingHorizontal: 12 },
   actionLabel: { fontSize: 10, fontWeight: '600' },

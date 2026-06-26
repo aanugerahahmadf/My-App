@@ -7,13 +7,17 @@ import {
   StyleSheet,
   ActivityIndicator,
   RefreshControl,
+  Platform,
   useColorScheme,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { useRouter } from 'expo-router';
 
-import { Colors, Spacing } from '@/constants/theme';
+import { Colors, Spacing, BottomTabInset } from '@/constants/theme';
 import { API } from '@/lib/endpoints';
 import { apiGet, apiDelete } from '@/lib/api-client';
+import { StaggeredEntrance } from '@/components/staggered-entrance';
 
 type Review = {
   id: number;
@@ -28,6 +32,7 @@ type Review = {
 export default function ReviewsScreen() {
   const scheme = useColorScheme();
   const colors = Colors[scheme === 'dark' ? 'dark' : 'light'];
+  const router = useRouter();
   const [reviews, setReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -69,40 +74,49 @@ export default function ReviewsScreen() {
     ));
   };
 
-  const renderReview = ({ item }: { item: Review }) => (
-    <View style={[styles.card, { backgroundColor: colors.backgroundElement }]}>
-      <View style={styles.cardHeader}>
-        <Text style={[styles.itemName, { color: colors.text }]} numberOfLines={1}>
-          {item.package?.name || item.product?.name || ''}
-        </Text>
+  const renderReview = ({ item, index }: { item: Review; index: number }) => (
+    <StaggeredEntrance index={index}>
+      <View style={[styles.card, { backgroundColor: colors.backgroundElement }]}>
+        <View style={styles.cardHeader}>
+          <Text style={[styles.itemName, { color: colors.text }]} numberOfLines={1}>
+            {item.package?.name || item.product?.name || ''}
+          </Text>
+        </View>
+        <View style={styles.ratingRow}>{renderStars(item.rating)}</View>
+        {item.comment && (
+          <Text style={[styles.comment, { color: colors.textSecondary }]}>
+            {item.comment}
+          </Text>
+        )}
+        <View style={styles.cardFooter}>
+          <Text style={[styles.date, { color: colors.textSecondary }]}>
+            {new Date(item.created_at).toLocaleDateString('id-ID')}
+          </Text>
+          <Pressable onPress={() => handleDelete(item.id)} style={styles.deleteBtn}>
+            <Ionicons name="trash-outline" size={18} color="#ef4444" />
+          </Pressable>
+        </View>
       </View>
-      <View style={styles.ratingRow}>{renderStars(item.rating)}</View>
-      {item.comment && (
-        <Text style={[styles.comment, { color: colors.textSecondary }]}>
-          {item.comment}
-        </Text>
-      )}
-      <View style={styles.cardFooter}>
-        <Text style={[styles.date, { color: colors.textSecondary }]}>
-          {new Date(item.created_at).toLocaleDateString('id-ID')}
-        </Text>
-        <Pressable onPress={() => handleDelete(item.id)} style={styles.deleteBtn}>
-          <Ionicons name="trash-outline" size={18} color="#ef4444" />
-        </Pressable>
-      </View>
-    </View>
+    </StaggeredEntrance>
   );
 
   if (loading) {
     return (
-      <View style={[styles.center, { backgroundColor: colors.background }]}>
+      <SafeAreaView style={[styles.center, { backgroundColor: colors.background }]}>
         <ActivityIndicator size="large" color={colors.text} />
-      </View>
+      </SafeAreaView>
     );
   }
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.background }]}>
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+      <View style={[styles.header, { borderBottomColor: colors.backgroundSelected }]}>
+        <Pressable onPress={() => router.back()} style={styles.backBtn}>
+          <Ionicons name="chevron-back" size={24} color={colors.text} />
+        </Pressable>
+        <Text style={[styles.headerTitle, { color: colors.text }]}>Reviews</Text>
+        <View style={{ width: 40 }} />
+      </View>
       <FlatList
         data={reviews}
         renderItem={renderReview}
@@ -118,14 +132,28 @@ export default function ReviewsScreen() {
           </View>
         }
       />
-    </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: Spacing.three,
+    paddingVertical: Spacing.three,
+    borderBottomWidth: 1,
+  },
+  backBtn: { width: 40, alignItems: 'flex-start' },
+  headerTitle: {
+    fontSize: 17,
+    fontWeight: '700',
+    fontFamily: Platform.OS === 'ios' ? 'Inter' : 'Inter',
+  },
   center: { flex: 1, justifyContent: 'center', alignItems: 'center', padding: Spacing.five },
-  list: { padding: Spacing.three },
+  list: { padding: Spacing.three, paddingBottom: BottomTabInset },
   emptyText: { marginTop: Spacing.three, fontSize: 14 },
   card: { borderRadius: 12, padding: Spacing.three, marginBottom: Spacing.three },
   cardHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: Spacing.one },

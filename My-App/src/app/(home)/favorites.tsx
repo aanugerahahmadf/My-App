@@ -6,13 +6,16 @@ import {
   Platform,
   RefreshControl,
   useColorScheme,
+  Pressable,
 } from 'react-native';
 import { useRouter } from 'expo-router';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Colors, Spacing } from '@/constants/theme';
 import { API } from '@/lib/endpoints';
-import { apiGet } from '@/lib/api-client';
+import { apiGet, apiPost } from '@/lib/api-client';
 import CbirGrid, { CbirItem } from '@/components/cbir-grid';
+import { Ionicons } from '@expo/vector-icons';
 
 export default function FavoritesScreen() {
   const scheme = useColorScheme();
@@ -22,6 +25,7 @@ export default function FavoritesScreen() {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | undefined>();
+  const [wishlistIds, setWishlistIds] = useState<Set<string>>(new Set());
 
   const fetchFavorites = useCallback(async () => {
     setLoading(true);
@@ -56,6 +60,8 @@ export default function FavoritesScreen() {
         ),
       }));
       setItems(mapped);
+      const ids = new Set<string>(list.map((w: any) => `${w.resource_type || w.type || 'product'}-${w.product_id || w.package_id || w.id}`));
+      setWishlistIds(ids);
     } catch (e: any) {
       setError(e.message || 'Gagal memuat favorite');
     } finally {
@@ -78,36 +84,61 @@ export default function FavoritesScreen() {
     router.push(`/(home)/cbir?filter=${item.type}&detail=${item.id}` as any);
   };
 
+  const toggleWishlist = useCallback(async (item: CbirItem) => {
+    const key = `${item.type}-${item.id}`;
+    try {
+      const body: any = {};
+      if (item.type === 'product') body.product_id = item.id;
+      else body.package_id = item.id;
+      await apiPost(API.WISHLIST.TOGGLE, body);
+      setWishlistIds((prev) => {
+        const next = new Set(prev);
+        next.delete(key);
+        return next;
+      });
+      setItems((prev) => prev.filter((i) => `${i.type}-${i.id}` !== key));
+    } catch {}
+  }, []);
+
   return (
-    <View style={[styles.container, { backgroundColor: colors.background }]}>
-      <View style={styles.header}>
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+      <View style={[styles.header, { borderBottomColor: colors.backgroundSelected }]}>
+        <Pressable onPress={() => router.back()} style={styles.backBtn}>
+          <Ionicons name="chevron-back" size={24} color={colors.text} />
+        </Pressable>
         <Text style={[styles.title, { color: colors.text }]}>
           Favorite
         </Text>
+        <View style={{ width: 40 }} />
       </View>
       <CbirGrid
         items={items}
         loading={loading}
         error={error}
         onPress={handlePress}
+        onToggleWishlist={toggleWishlist}
+        wishlistIds={wishlistIds}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
       />
-    </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
   header: {
-    padding: Spacing.three,
-    paddingBottom: Spacing.two,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: Spacing.three,
+    paddingVertical: Spacing.three,
     borderBottomWidth: 1,
-    borderBottomColor: 'rgba(128,128,128,0.2)',
   },
+  backBtn: { width: 40, alignItems: 'flex-start' },
   title: {
-    fontSize: 18,
+    fontSize: 17,
     fontWeight: '700',
     fontFamily: Platform.OS === 'ios' ? 'Inter' : 'Inter',
   },
